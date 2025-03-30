@@ -4,18 +4,17 @@ namespace JaebeMusicStudio3.Core.AudioNodes;
 
 public class DummyNoise : IAudioNode
 {
-    public Dictionary<string, NodeInputDefinition> Inputs => new Dictionary<string, NodeInputDefinition>();
+    public IEnumerable<NodeInputDefinition> Inputs => new List<NodeInputDefinition>();
 
-    public Dictionary<string, NodeOutputDefinition> Outputs => new Dictionary<string, NodeOutputDefinition>()
+    public IEnumerable<NodeOutputDefinition> Outputs => new List<NodeOutputDefinition>()
     {
-        {
-            "main", new NodeOutputDefinition()
+        new NodeOutputDefinition()
             {
                 Type = NodeConnectionType.SingleChannelAudio,
                 Node = this,
                 Name="main"
             }
-        }
+        
     };
 
     public async Task<Dictionary<string, object>> Render(RenderingChunk chunk)

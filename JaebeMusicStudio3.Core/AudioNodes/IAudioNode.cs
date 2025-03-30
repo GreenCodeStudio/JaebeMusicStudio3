@@ -4,7 +4,7 @@ namespace JaebeMusicStudio3.Core.AudioNodes;
 
 public interface IAudioNode
 {
-    Dictionary<string,NodeInputDefinition> Inputs { get; }
-    Dictionary<string,NodeOutputDefinition> Outputs { get; }
+    IEnumerable<NodeInputDefinition> Inputs { get; }
+    IEnumerable<NodeOutputDefinition> Outputs { get; }
     Task<Dictionary<string, object>> Render(RenderingChunk chunk);
 }

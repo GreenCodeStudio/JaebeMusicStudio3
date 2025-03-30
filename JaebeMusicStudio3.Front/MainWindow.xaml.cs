@@ -32,9 +32,11 @@ public partial class MainWindow : Window
     {
         var mixer = new Mixer();
         var dummy = new DummyNoise();
+        var input = new LiveAudioInput(0);
 
         mixer.Add(dummy);
-        mixer.MainOutput = dummy.Outputs["main"];
+        mixer.Add(input);
+        mixer.MainOutput = input.Outputs.First();
 
         var process = new RenderingProcess();
         var provider = new WaveProvider(process, mixer);
