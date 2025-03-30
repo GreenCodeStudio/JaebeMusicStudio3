@@ -41,7 +41,7 @@ public partial class MainWindow : Window
         var process = new RenderingProcess();
         var provider = new WaveProvider(process, mixer);
         provider.WaveFormat = new WaveFormat(48000, 2);
-        var output = new WasapiOut(AudioClientShareMode.Shared, 1);
+        var output = new WasapiOut(AudioClientShareMode.Shared, 100);
         output.Init((IWaveProvider)provider);
         output.Play();
 

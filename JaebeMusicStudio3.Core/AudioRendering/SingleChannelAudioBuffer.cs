@@ -8,7 +8,7 @@ public class SingleChannelAudioBuffer
     public SingleChannelAudioBuffer(int sampleRate, long chunkLength)
     {
         SampleRate = sampleRate;
-        Data=new float[chunkLength];
+        Data = new float[chunkLength];
     }
 
     public int SampleRate { get; set; }
@@ -17,10 +17,10 @@ public class SingleChannelAudioBuffer
     public void WriteToRaw(WaveFormat waveFormat, Span<byte> span)
     {
         //todo hevy optimization
-        if(SampleRate != waveFormat.SampleRate)
+        if (SampleRate != waveFormat.SampleRate)
             throw new Exception("SampleRate must be " + waveFormat.SampleRate);
-        
-        var bits=waveFormat.BitsPerSample/waveFormat.Channels;
+
+        var bits = waveFormat.BitsPerSample / waveFormat.Channels;
         if (waveFormat.BitsPerSample == 8)
         {
             var subspan = MemoryMarshal.Cast<byte, sbyte>(span);
@@ -35,7 +35,8 @@ public class SingleChannelAudioBuffer
                         break;
                 }
             }
-        } else if (waveFormat.BitsPerSample == 16)
+        }
+        else if (waveFormat.BitsPerSample == 16)
         {
             var subspan = MemoryMarshal.Cast<byte, short>(span);
             var j = 0;

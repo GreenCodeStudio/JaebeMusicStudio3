@@ -9,12 +9,11 @@ public class DummyNoise : IAudioNode
     public IEnumerable<NodeOutputDefinition> Outputs => new List<NodeOutputDefinition>()
     {
         new NodeOutputDefinition()
-            {
-                Type = NodeConnectionType.SingleChannelAudio,
-                Node = this,
-                Name="main"
-            }
-        
+        {
+            Type = NodeConnectionType.SingleChannelAudio,
+            Node = this,
+            Name = "main"
+        }
     };
 
     public async Task<Dictionary<string, object>> Render(RenderingChunk chunk)
@@ -23,7 +22,9 @@ public class DummyNoise : IAudioNode
         var random = new Random();
         for (var i = 0; i < chunk.Length; i++)
         {
-            buffer.Data[i] = random.NextSingle() * 0.1f;
+            if(i%100==0)
+            Console.WriteLine(chunk.Start+ i);
+            buffer.Data[i] = (float)Math.Sin((chunk.Start + i) / 100.0) * 0.1f;
         }
 
         return new Dictionary<string, object>() { { "main", buffer } };

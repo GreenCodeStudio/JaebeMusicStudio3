@@ -30,10 +30,11 @@ public class LiveAudioInput : IAudioNode
         {
             while (this.buffers.Any())
             {
-                var span = MemoryMarshal.Cast<byte, short>(new Span<byte>(this.buffers.First(), 0, this.buffers.First().Length));
-                while(bufferPosition<span.Length && i<buffor.Data.Length)
+                var span = MemoryMarshal.Cast<byte, short>(new Span<byte>(this.buffers.First(), 0,
+                    this.buffers.First().Length));
+                while (bufferPosition < span.Length && i < buffor.Data.Length)
                 {
-                    buffor.Data[i]=span[bufferPosition]/ (float)0x7fff;
+                    buffor.Data[i] = span[bufferPosition] / (float)0x7fff;
                     i++;
                     bufferPosition++;
                 }
@@ -49,7 +50,6 @@ public class LiveAudioInput : IAudioNode
                     break;
                 }
             }
-            
         }
 
         return Task.FromResult(new Dictionary<string, object>() { { "main", buffor } });
@@ -64,7 +64,8 @@ public class LiveAudioInput : IAudioNode
         {
             lock (this)
             {
-                buffers.Add(args.Buffer);
+//need to copy data
+                buffers.Add(new Span<byte>(args.Buffer, 0, args.BytesRecorded).ToArray());
             }
         };
         capture.StartRecording();

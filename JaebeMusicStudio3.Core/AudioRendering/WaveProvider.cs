@@ -8,7 +8,7 @@ public class WaveProvider(RenderingProcess process, Mixer.Mixer mixer) :IWavePro
     {
         var span=new Span<byte>(buffer,offset,count);
         
-        var samples = count * 8 / WaveFormat.BitsPerSample;
+        var samples = count * 8 / WaveFormat.BitsPerSample/WaveFormat.Channels;
         var chunk = process.GetChunk(samples);
 
         mixer.Render(chunk);
