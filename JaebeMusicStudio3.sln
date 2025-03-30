@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JaebeMusicStudio3.Front", "JaebeMusicStudio3.Front\JaebeMusicStudio3.Front.csproj", "{CDC6DF72-663E-4F3D-B49F-4B24A2570CE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JaebeMusicStudio3.Core", "JaebeMusicStudio3.Core\JaebeMusicStudio3.Core.csproj", "{5792DF2A-0D78-4303-B770-C2232521C70C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CDC6DF72-663E-4F3D-B49F-4B24A2570CE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDC6DF72-663E-4F3D-B49F-4B24A2570CE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDC6DF72-663E-4F3D-B49F-4B24A2570CE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDC6DF72-663E-4F3D-B49F-4B24A2570CE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5792DF2A-0D78-4303-B770-C2232521C70C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5792DF2A-0D78-4303-B770-C2232521C70C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5792DF2A-0D78-4303-B770-C2232521C70C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5792DF2A-0D78-4303-B770-C2232521C70C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
