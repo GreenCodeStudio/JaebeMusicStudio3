@@ -8,6 +8,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using JaebeMusicStudio3.Core.AudioNodes;
+using JaebeMusicStudio3.Core.AudioRendering;
+using JaebeMusicStudio3.Core.Mixer;
+using NAudio.CoreAudioApi;
+using NAudio.Wave;
 
 namespace JaebeMusicStudio3.Front;
 
@@ -19,5 +24,24 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        var thread = new Thread(LiveRenderThread);
+        thread.Start();
+    }
+
+    private static void LiveRenderThread()
+    {
+        var mixer = new Mixer();
+        var dummy = new DummyNoise();
+
+        mixer.Add(dummy);
+        mixer.MainOutput = dummy.Outputs["main"];
+
+        var process = new RenderingProcess();
+        var provider = new WaveProvider(process, mixer);
+        provider.WaveFormat = new WaveFormat(48000, 2);
+        var output = new WasapiOut(AudioClientShareMode.Shared, 1);
+        output.Init((IWaveProvider)provider);
+        output.Play();
+
     }
 }

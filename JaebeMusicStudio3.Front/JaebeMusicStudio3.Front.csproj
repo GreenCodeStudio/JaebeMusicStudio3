@@ -8,4 +8,8 @@
         <UseWPF>true</UseWPF>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\JaebeMusicStudio3.Core\JaebeMusicStudio3.Core.csproj" />
+    </ItemGroup>
+
 </Project>
