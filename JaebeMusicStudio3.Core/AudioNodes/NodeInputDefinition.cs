@@ -3,7 +3,7 @@
 public class NodeInputDefinition
 {
     public string Name { get; set; }
-    public VolumeNode Node { get; set; }
+    public IAudioNode Node { get; set; }
     public NodeConnectionType Type { get; set; }
     
     

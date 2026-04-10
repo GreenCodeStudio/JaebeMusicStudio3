@@ -13,6 +13,29 @@ public partial class MixerGui : UserControl
         InitializeComponent();
         Render();
         mixer.Changed += () => { Dispatcher.Invoke(() => Render()); };
+        var contextMenu = new ContextMenu();
+        this.ContextMenu = contextMenu;
+        var add = new MenuItem();
+        add.Header = "Add";
+        contextMenu.Items.Add(add);
+        
+        var mix = new MenuItem();
+        mix.Header = "Mix";
+        mix.Click += (s, e) =>
+        {
+            var node = new MixNode();
+            Mixer.Add(node);
+        };
+        add.Items.Add(mix);
+        
+        var liveAudioInput = new MenuItem();
+        liveAudioInput.Header = "LiveAudioInput";
+        liveAudioInput.Click += (s, e) =>
+        {
+            var node = new LiveAudioInput();
+            Mixer.Add(node);
+        };
+        add.Items.Add(liveAudioInput);
     }
 
     public AudioMixer Mixer { get; set; }
@@ -26,7 +49,7 @@ public partial class MixerGui : UserControl
         {
             var nodeGui = new MixerNodeGui(node);
             nodeGui.Width = 200;
-            nodeGui.Height = 50;
+            nodeGui.Height = 100;
 
             var pos = Mixer.GetPosition(node);
             nodeGui.Margin = new System.Windows.Thickness(pos.X, pos.Y, 0, 0);
@@ -45,17 +68,6 @@ public partial class MixerGui : UserControl
                 }
             };
             nodeGui.ContextMenu = new ContextMenu();
-            var zzzz = (new MenuItem()
-            {
-                Header = "Move"
-            });
-            zzzz.Click += (s, e) =>
-            {
-                var pos = Mixer.GetPosition(node);
-                pos.X += 10;
-                Mixer.SetPosition(node, pos);
-            };
-            nodeGui.ContextMenu.Items.Add(zzzz);
 
             // nodeGui.MouseDown += (sender, args) => { CaptureMouse(); };
             nodeGui.MouseMove += (sender, args) =>
@@ -69,10 +81,7 @@ public partial class MixerGui : UserControl
                 }
             };
             // nodeGui.MouseUp += (sender, args) => { ReleaseMouseCapture(); };
-            nodeGui.Connect += (input, output) =>
-            {
-                Mixer.Connect(output, input);
-            };
+            nodeGui.Connect += (input, output) => { Mixer.Connect(output, input); };
         }
 
         foreach (var x in Mixer.Connections)
@@ -80,11 +89,13 @@ public partial class MixerGui : UserControl
             var lineStartNode = map[x.Key.Node];
             var lineEndNode = map[x.Value.Node];
             var line = new Line();
+            var startIndex = x.Key.Node.Inputs.Select(n => n.Name).ToArray().IndexOf(x.Key.Name);
+            var endIndex = x.Value.Node.Outputs.Select(n => n.Name).ToArray().IndexOf(x.Value.Name);
             line.Stroke = System.Windows.Media.Brushes.Black;
-            line.X1 = lineStartNode.Margin.Left + lineStartNode.Width;
-            line.Y1 = lineStartNode.Margin.Top + lineStartNode.Height / 2;
-            line.X2 = lineEndNode.Margin.Left;
-            line.Y2 = lineEndNode.Margin.Top + lineEndNode.Height / 2;
+            line.X1 = lineStartNode.Margin.Left;
+            line.Y1 = lineStartNode.Margin.Top + 40 + 30 * startIndex;
+            line.X2 = lineEndNode.Margin.Left + lineEndNode.Width;
+            line.Y2 = lineEndNode.Margin.Top + 40 + 30 * endIndex;
             Plane.Children.Add(line);
         }
     }
