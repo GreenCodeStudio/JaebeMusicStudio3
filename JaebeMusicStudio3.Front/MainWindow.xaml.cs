@@ -33,12 +33,13 @@ public partial class MainWindow : Window
         var mixer = new AudioMixer();
         var dummy = new DummyNoise();
         var volume = new VolumeNode();
-        var input = new LiveAudioInput(0);
+        var input = new LiveAudioInput();
 
         mixer.Add(dummy);
         mixer.Add(input);
         mixer.Add(volume);
-        mixer.Connect(dummy.Outputs.First(), volume.Inputs.First());
+        // mixer.Connect(dummy.Outputs.First(), volume.Inputs.First());
+        // mixer.Connect(input.Outputs.First(), volume.Inputs.First());
         mixer.MainOutput = volume.Outputs.First();
 
         var process = new RenderingProcess();

@@ -12,6 +12,10 @@ public class GuiFactory
         {
             return new VolumeNodeGui(x as VolumeNode);
         }
+        else  if (x is LiveAudioInput)
+        {
+            return new LiveAudioInputGui(x as LiveAudioInput);
+        }
         else
         {
             return null;

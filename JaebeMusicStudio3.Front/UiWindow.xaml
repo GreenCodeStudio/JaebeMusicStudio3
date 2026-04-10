@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="UiWindow" Height="450" Width="800">
     <Grid>
-        
+        <Button VerticalAlignment="Top" HorizontalAlignment="Left" Name="DuplicateButton">Duplicate</Button>
+        <Grid Name="ContentWrapper" Margin="0,25,0,0"></Grid>
     </Grid>
 </Window>

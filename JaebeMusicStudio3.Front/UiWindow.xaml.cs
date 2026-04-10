@@ -5,15 +5,22 @@ namespace JaebeMusicStudio3.Front;
 
 public partial class UiWindow : Window
 {
+    private readonly Func<UserControl> _createMethod;
     private static UiWindow tmp;
 
     public UiWindow(Func<UserControl> createControl)
     {
         InitializeComponent();
+        this._createMethod = createControl;
         var control = createControl();
-        this.Content = control;
+        this.ContentWrapper.Children.Clear();
+        this.ContentWrapper.Children.Add(control);
         this.Title = control.ToString();
         Closed += (s, e) => { System.Windows.Threading.Dispatcher.ExitAllFrames(); };
+        DuplicateButton.Click += (s, e) =>
+        {
+            Open(_createMethod);
+        };
     }
 
     public static void Open(Func<UserControl> createControl)

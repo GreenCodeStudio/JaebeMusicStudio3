@@ -29,4 +29,6 @@ public class DummyNoise : IAudioNode
 
         return new Dictionary<string, object>() { { "main", buffer } };
     }
+    
+    public string Title => "Dummy Noise";
 }

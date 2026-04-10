@@ -12,6 +12,7 @@ public partial class MixerGui : UserControl
         this.Mixer = mixer;
         InitializeComponent();
         Render();
+        mixer.Changed += () => { Dispatcher.Invoke(() => Render()); };
     }
 
     public AudioMixer Mixer { get; set; }
@@ -26,7 +27,9 @@ public partial class MixerGui : UserControl
             var nodeGui = new MixerNodeGui(node);
             nodeGui.Width = 200;
             nodeGui.Height = 50;
-            nodeGui.Margin = new System.Windows.Thickness(10, y, 0, 0);
+
+            var pos = Mixer.GetPosition(node);
+            nodeGui.Margin = new System.Windows.Thickness(pos.X, pos.Y, 0, 0);
             nodeGui.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
             nodeGui.VerticalAlignment = System.Windows.VerticalAlignment.Top;
             Plane.Children.Add(nodeGui);
@@ -40,6 +43,35 @@ public partial class MixerGui : UserControl
                 {
                     PropertiesWrapper.Children.Add(x);
                 }
+            };
+            nodeGui.ContextMenu = new ContextMenu();
+            var zzzz = (new MenuItem()
+            {
+                Header = "Move"
+            });
+            zzzz.Click += (s, e) =>
+            {
+                var pos = Mixer.GetPosition(node);
+                pos.X += 10;
+                Mixer.SetPosition(node, pos);
+            };
+            nodeGui.ContextMenu.Items.Add(zzzz);
+
+            // nodeGui.MouseDown += (sender, args) => { CaptureMouse(); };
+            nodeGui.MouseMove += (sender, args) =>
+            {
+                if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+                {
+                    var pos = Mixer.GetPosition(node);
+                    pos.X += args.MouseDevice.GetPosition(Plane).X - nodeGui.Margin.Left - nodeGui.Width / 2;
+                    pos.Y += args.MouseDevice.GetPosition(Plane).Y - nodeGui.Margin.Top - nodeGui.Height / 2;
+                    Mixer.SetPosition(node, pos);
+                }
+            };
+            // nodeGui.MouseUp += (sender, args) => { ReleaseMouseCapture(); };
+            nodeGui.Connect += (input, output) =>
+            {
+                Mixer.Connect(output, input);
             };
         }
 

@@ -11,12 +11,15 @@ public class AudioMixer
     private Dictionary<NodeInputDefinition, NodeOutputDefinition> _connections =
         new Dictionary<NodeInputDefinition, NodeOutputDefinition>();
 
+    private Dictionary<IAudioNode, VisualPosition> _positions = new Dictionary<IAudioNode, VisualPosition>();
+    public event Action Changed;
     public void Add(IAudioNode node)
     {
         lock (this)
         {
             _nodes.Add(node);
         }
+        Changed?.Invoke();
     }
 
     public void Render(RenderingChunk chunk)
@@ -54,6 +57,7 @@ public class AudioMixer
         {
             _connections.Add(input, output);
         }
+        Changed?.Invoke();
     }
 
     public IEnumerable<IAudioNode> Nodes
@@ -76,5 +80,28 @@ public class AudioMixer
                 return _connections.ToArray();
             }
         }
+    }
+
+    public VisualPosition GetPosition(IAudioNode node)
+    {
+        lock (this)
+        {
+            if (_positions.ContainsKey(node))
+                return _positions[node];
+            else
+            {
+                var pos = new VisualPosition();
+                _positions[node] = pos;
+                return pos;
+            }
+        }
+    }
+    public void SetPosition(IAudioNode node, VisualPosition position)
+    {
+        lock (this)
+        {
+            _positions[node] = position;
+        }
+        Changed?.Invoke();
     }
 }
