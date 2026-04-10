@@ -1,8 +1,9 @@
-﻿using NAudio.Wave;
+﻿using JaebeMusicStudio3.Core.Mixer;
+using NAudio.Wave;
 
 namespace JaebeMusicStudio3.Core.AudioRendering;
 
-public class WaveProvider(RenderingProcess process, Mixer.Mixer mixer) :IWaveProvider
+public class WaveProvider(RenderingProcess process, AudioMixer mixer) :IWaveProvider
 {
     public int Read(byte[] buffer, int offset, int count)
     {

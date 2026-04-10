@@ -6,5 +6,5 @@ public interface IAudioNode
 {
     IEnumerable<NodeInputDefinition> Inputs { get; }
     IEnumerable<NodeOutputDefinition> Outputs { get; }
-    Task<Dictionary<string, object>> Render(RenderingChunk chunk);
+    Task<Dictionary<string, object>> Render(RenderingChunk chunk, Dictionary<string, object> inputs);
 }

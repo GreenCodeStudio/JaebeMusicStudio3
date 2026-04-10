@@ -8,7 +8,7 @@ namespace JaebeMusicStudio3.Core.AudioNodes;
 public class LiveAudioInput : IAudioNode
 {
     private readonly int DeviceID;
-    private List<byte[]> buffers = new();
+    private List<float[]> buffers = new();
     private int bufferPosition = 0;
     public IEnumerable<NodeInputDefinition> Inputs => new List<NodeInputDefinition>();
 
@@ -22,7 +22,7 @@ public class LiveAudioInput : IAudioNode
         }
     };
 
-    public Task<Dictionary<string, object>> Render(RenderingChunk chunk)
+    public Task<Dictionary<string, object>> Render(RenderingChunk chunk, Dictionary<string, object> inputs)
     {
         var buffor = new SingleChannelAudioBuffer(chunk.Process.SampleRate, chunk.Length);
         var i = 0;
@@ -30,16 +30,15 @@ public class LiveAudioInput : IAudioNode
         {
             while (this.buffers.Any())
             {
-                var span = MemoryMarshal.Cast<byte, short>(new Span<byte>(this.buffers.First(), 0,
-                    this.buffers.First().Length));
-                while (bufferPosition < span.Length && i < buffor.Data.Length)
+                var inputBuffer = this.buffers.First();
+                while (bufferPosition < inputBuffer.Length && i < buffor.Data.Length)
                 {
-                    buffor.Data[i] = span[bufferPosition] / (float)0x7fff;
+                    buffor.Data[i] = inputBuffer[bufferPosition] ;
                     i++;
                     bufferPosition++;
                 }
 
-                if (bufferPosition >= span.Length)
+                if (bufferPosition >= inputBuffer.Length)
                 {
                     bufferPosition = 0;
                     buffers.RemoveAt(0);
@@ -64,8 +63,16 @@ public class LiveAudioInput : IAudioNode
         {
             lock (this)
             {
-//need to copy data
-                buffers.Add(new Span<byte>(args.Buffer, 0, args.BytesRecorded).ToArray());
+//need to copy data here
+                var span1 = new Span<byte>(args.Buffer, 0, args.BytesRecorded);
+                var span = MemoryMarshal.Cast<byte, short>(span1);
+                var copied = new float[span.Length];
+                for (var i = 0; i < span.Length; i++)
+                {
+                    copied[i] = (float)span[i] / (float)0x7fff;
+                }
+
+                buffers.Add(copied);
             }
         };
         capture.StartRecording();

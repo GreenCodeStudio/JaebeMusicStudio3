@@ -56,4 +56,5 @@ public class SingleChannelAudioBuffer
             throw new Exception("SampleRate not implemented");
         }
     }
+    public Span<float> AsSpan=>new Span<float>(Data, 0, Data.Length);
 }

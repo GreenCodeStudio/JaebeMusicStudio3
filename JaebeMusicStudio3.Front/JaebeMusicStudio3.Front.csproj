@@ -6,10 +6,15 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
+        <LangVersion>14</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\JaebeMusicStudio3.Core\JaebeMusicStudio3.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Gui\" />
     </ItemGroup>
 
 </Project>

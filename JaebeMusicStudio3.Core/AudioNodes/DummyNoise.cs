@@ -16,7 +16,7 @@ public class DummyNoise : IAudioNode
         }
     };
 
-    public async Task<Dictionary<string, object>> Render(RenderingChunk chunk)
+    public async Task<Dictionary<string, object>> Render(RenderingChunk chunk, Dictionary<string, object> inputs)
     {
         var buffer = new SingleChannelAudioBuffer(chunk.Process.SampleRate, chunk.Length);
         var random = new Random();
