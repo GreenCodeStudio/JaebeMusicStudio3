@@ -3,7 +3,7 @@ using NAudio.Wave;
 
 namespace JaebeMusicStudio3.Core.AudioRendering;
 
-public class WaveProvider(RenderingProcess process, AudioMixer mixer) : IWaveProvider
+public class WaveProvider(AudioMixer mixer) : IWaveProvider
 {
     public static event Action<RenderingChunk> ChunkCreated;
     public int Read(byte[] buffer, int offset, int count)
@@ -11,7 +11,7 @@ public class WaveProvider(RenderingProcess process, AudioMixer mixer) : IWavePro
         var span = new Span<byte>(buffer, offset, count);
 
         var samples = count * 8 / WaveFormat.BitsPerSample / WaveFormat.Channels;
-        var chunk = process.GetChunk(samples);
+        var chunk = RenderingProcess.Current.GetChunk(samples);
 
         mixer.Render(chunk);
         ChunkCreated?.Invoke(chunk);

@@ -31,7 +31,7 @@ public partial class MainWindow : Window
 
     private static void LiveRenderThread()
     {
-        var mixer = new AudioMixer();
+        var mixer = AudioMixer.Current;
         var timeline = new Timeline();
         var dummy = new DummyNoise();
         var volume = new VolumeNode();
@@ -44,8 +44,8 @@ public partial class MainWindow : Window
         // mixer.Connect(input.Outputs.First(), volume.Inputs.First());
         mixer.MainOutput = volume.Outputs.First();
 
-        var process = new RenderingProcess();
-        var provider = new WaveProvider(process, mixer);
+        var process = RenderingProcess.Current;
+        var provider = new WaveProvider(mixer);
         provider.WaveFormat = new WaveFormat(48000, 2);
         var output = new WasapiOut(AudioClientShareMode.Shared, 0);
         output.Init((IWaveProvider)provider);

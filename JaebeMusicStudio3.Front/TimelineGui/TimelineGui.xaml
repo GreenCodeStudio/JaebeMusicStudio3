@@ -13,6 +13,8 @@
                 <Button Click="AudioRecorderClick">Audio recorder</Button>
                 <Button Click="ZoomOut">Zoom -</Button>
                 <Button Click="ZoomIn">Zoom +</Button>
+                <Button Click="Play">Play</Button>
+                <Button Click="Stop">Stop</Button>
             </StackPanel>
             <StackPanel>
             <Grid Name="NextLine" Background="AntiqueWhite" Height="100"></Grid>

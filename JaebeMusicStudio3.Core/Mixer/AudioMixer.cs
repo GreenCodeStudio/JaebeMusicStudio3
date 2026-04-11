@@ -5,6 +5,7 @@ namespace JaebeMusicStudio3.Core.Mixer;
 
 public class AudioMixer
 {
+    public static AudioMixer Current = new AudioMixer();
     private List<IAudioNode> _nodes = new List<IAudioNode>();
     public NodeOutputDefinition MainOutput { get; set; }
 

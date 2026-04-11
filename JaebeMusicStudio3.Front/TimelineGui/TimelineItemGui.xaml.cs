@@ -19,7 +19,7 @@ public partial class TimelineItemGui : UserControl
             var halfHeight = 50;
             if (itemC.Samples != null)
             {
-                var widthOfSample = 1.0 / itemC.WaveFormat.SampleRate/secondsPerPixel;
+                var widthOfSample = 1.0 / itemC.WaveFormat.SampleRate / secondsPerPixel;
                 var i = 0;
                 foreach (var sample in itemC.Samples)
                 {

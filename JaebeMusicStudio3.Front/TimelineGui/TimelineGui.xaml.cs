@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using JaebeMusicStudio3.Core.AudioRendering;
+using JaebeMusicStudio3.Core.Mixer;
 using JaebeMusicStudio3.Core.Timeline;
 using NAudio.Wave;
 
@@ -26,13 +28,14 @@ public partial class TimelineGui : UserControl
         {
             Lines.Children.RemoveAt(1);
         }
-        foreach(var item in timeline.Items)
+
+        foreach (var item in timeline.Items)
         {
             if (item is RecordedSoundInProgress recordedSoundInProgress)
             {
                 var line = new Grid();
                 line.Height = 100;
-                line.Width=recordedSoundInProgress.LengthSeconds / SecondsPerPixel;
+                line.Width = recordedSoundInProgress.LengthSeconds / SecondsPerPixel;
                 Lines.Children.Insert(Lines.Children.Count - 1, line);
                 var control = new TimelineItemGui(recordedSoundInProgress, SecondsPerPixel);
                 line.Children.Add(control);
@@ -70,6 +73,7 @@ public partial class TimelineGui : UserControl
     {
         var recorder = new AudioRecorder();
         timeline.Add(recorder.RecordedSoundInProgress);
+        AudioMixer.Current.Add(recorder.RecordedSoundInProgress);
         UiWindow.Open(() => new AudioRecorderGui(recorder));
     }
 
@@ -83,5 +87,15 @@ public partial class TimelineGui : UserControl
     {
         SecondsPerPixel /= 1.25;
         Render();
+    }
+
+    private void Play(object sender, RoutedEventArgs e)
+    {
+        RenderingProcess.Current = new RenderingProcess(true);
+    }
+
+    private void Stop(object sender, RoutedEventArgs e)
+    {
+        RenderingProcess.Current = new RenderingProcess(false);
     }
 }

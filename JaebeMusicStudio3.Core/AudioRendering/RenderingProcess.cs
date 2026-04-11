@@ -1,7 +1,8 @@
 ﻿namespace JaebeMusicStudio3.Core.AudioRendering;
 
-public class RenderingProcess
+public class RenderingProcess(bool useTimeline)
 {
+    public static RenderingProcess Current = new RenderingProcess(false);
     public int SampleRate { get; private set; } = 48000;
     public long Position { get; private set; } = 0;
 
