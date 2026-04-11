@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <StackPanel Name="Lines">
+        <StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button Click="LoadFileClick">Load file</Button>
                 <Button Click="AudioRecorderClick">Audio recorder</Button>
@@ -16,9 +16,10 @@
                 <Button Click="Play">Play</Button>
                 <Button Click="Stop">Stop</Button>
             </StackPanel>
-            <StackPanel>
-            <Grid Name="NextLine" Background="AntiqueWhite" Height="100"></Grid>
-        </StackPanel>
+            <StackPanel Name="Lines">
+                <local:TimelineMarker Height="30" x:Name="TimelineMarker" />
+                <Grid Name="NextLine" Background="AntiqueWhite" Height="100"></Grid>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </UserControl>

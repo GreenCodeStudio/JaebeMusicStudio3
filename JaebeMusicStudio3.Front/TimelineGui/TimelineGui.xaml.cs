@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using JaebeMusicStudio3.Core.AudioRendering;
 using JaebeMusicStudio3.Core.Mixer;
 using JaebeMusicStudio3.Core.Timeline;
@@ -20,10 +21,22 @@ public partial class TimelineGui : UserControl
         Drop += OnDrop;
         Render();
         timeline.Changed += () => { Dispatcher.Invoke(() => Render()); };
+        MouseWheel += TimelineGui_MouseWheel;
+    }
+
+    private void TimelineGui_MouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+        {
+            var multiplier = Math.Pow(1.25, e.Delta / 120.0);
+            SecondsPerPixel *= multiplier;
+            Render();
+        }
     }
 
     private void Render()
     {
+        this.TimelineMarker.SecondsPerPixel = SecondsPerPixel;
         while (Lines.Children.Count > 2)
         {
             Lines.Children.RemoveAt(1);
