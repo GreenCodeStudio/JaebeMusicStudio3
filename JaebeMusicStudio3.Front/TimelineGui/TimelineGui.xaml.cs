@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using JaebeMusicStudio3.Core.AudioRendering;
 using JaebeMusicStudio3.Core.Mixer;
 using JaebeMusicStudio3.Core.Timeline;
@@ -22,6 +23,20 @@ public partial class TimelineGui : UserControl
         Render();
         timeline.Changed += () => { Dispatcher.Invoke(() => Render()); };
         MouseWheel += TimelineGui_MouseWheel;
+        CompositionTarget.Rendering += (s, e) =>
+        {
+            if (RenderingProcess.Current.UseTimeline)
+            {
+                NowMarker.Margin =
+                    new Thickness(
+                        (double)RenderingProcess.Current.Position / RenderingProcess.Current.SampleRate /
+                        SecondsPerPixel, 0, 0, 0);
+            }
+            else
+            {
+                NowMarker.Margin = new Thickness(0, 0, 0, 0);
+            }
+        };
     }
 
     private void TimelineGui_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -48,10 +63,12 @@ public partial class TimelineGui : UserControl
             {
                 var line = new Grid();
                 line.Height = 100;
-                line.Width = recordedSoundInProgress.LengthSeconds / SecondsPerPixel;
                 Lines.Children.Insert(Lines.Children.Count - 1, line);
                 var control = new TimelineItemGui(recordedSoundInProgress, SecondsPerPixel);
+                control.HorizontalAlignment = HorizontalAlignment.Left;
+                control.Width = recordedSoundInProgress.LengthSeconds / SecondsPerPixel;
                 line.Children.Add(control);
+                recordedSoundInProgress.Changed += ()=>Dispatcher.Invoke(Render);
             }
         }
     }

@@ -5,6 +5,7 @@ public class RenderingProcess(bool useTimeline)
     public static RenderingProcess Current = new RenderingProcess(false);
     public int SampleRate { get; private set; } = 48000;
     public long Position { get; private set; } = 0;
+    public bool UseTimeline => useTimeline;
 
     public RenderingChunk GetChunk(long length)
     {

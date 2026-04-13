@@ -8,7 +8,16 @@ namespace JaebeMusicStudio3.Core.Timeline;
 public class RecordedSound : ITimelineItem, IAudioNode
 {
     public WaveFormat WaveFormat { get; set; }
-    public float[] Samples { get; set; }
+
+    public float[] Samples
+    {
+        get;
+        set
+        {
+            field = value;
+            Changed?.Invoke();
+        }
+    }
 
     public double LengthSeconds => (WaveFormat != null) ? ((Samples?.Length ?? 0) / (double)WaveFormat.SampleRate) : 0;
 
@@ -32,7 +41,7 @@ public class RecordedSound : ITimelineItem, IAudioNode
     {
         var output = new SingleChannelAudioBuffer(chunk.Process.SampleRate, chunk.Length);
         var outputSpan = output.AsSpan;
-        if (Samples != null && Samples.Length > chunk.Start)
+        if (Samples != null && Samples.Length > chunk.Start && chunk.Process.UseTimeline)
         {
             var slice = new Span<float>(Samples).Slice((int)chunk.Start);
             if (slice.Length > chunk.Length)
@@ -44,4 +53,5 @@ public class RecordedSound : ITimelineItem, IAudioNode
     }
 
     public string Title => "Recorded Sound";
+    public event Action Changed;
 }

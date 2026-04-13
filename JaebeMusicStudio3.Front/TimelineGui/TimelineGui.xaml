@@ -16,10 +16,13 @@
                 <Button Click="Play">Play</Button>
                 <Button Click="Stop">Stop</Button>
             </StackPanel>
-            <StackPanel Name="Lines">
+            <Grid Name="LinesWrapper">
+                <Rectangle Fill="Brown" Width="1" HorizontalAlignment="Left" Name="NowMarker"></Rectangle>
+                <StackPanel Name="Lines">
                 <local:TimelineMarker Height="30" x:Name="TimelineMarker" />
                 <Grid Name="NextLine" Background="AntiqueWhite" Height="100"></Grid>
             </StackPanel>
+                </Grid>
         </StackPanel>
     </Grid>
 </UserControl>

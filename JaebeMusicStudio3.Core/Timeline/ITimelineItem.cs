@@ -2,5 +2,5 @@
 
 public interface ITimelineItem
 {
-    
+    event Action Changed;
 }
