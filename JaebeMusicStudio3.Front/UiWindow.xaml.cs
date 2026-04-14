@@ -21,6 +21,14 @@ public partial class UiWindow : Window
         {
             Open(_createMethod);
         };
+        if(control is ITabbableControl tabbable)
+        {
+            this.Title = tabbable.Title;
+            tabbable.ChangedMetadata += () =>
+            {
+                this.Title = tabbable.Title;
+            };
+        }
     }
 
     public static void Open(Func<UserControl> createControl)
@@ -31,6 +39,7 @@ public partial class UiWindow : Window
             window.Show();
             System.Windows.Threading.Dispatcher.Run();
         });
+        thread.Name = "AdditionalUiWindow";
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
     }

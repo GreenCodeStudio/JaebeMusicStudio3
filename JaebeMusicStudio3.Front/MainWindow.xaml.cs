@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,11 +23,65 @@ namespace JaebeMusicStudio3.Front;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private static WaveProvider provider;
+    static private WasapiOut output;
+
+    static MainWindow()
+    {
+        output = new WasapiOut(AudioClientShareMode.Shared, 0);
+    }
+
     public MainWindow()
     {
         InitializeComponent();
         var thread = new Thread(LiveRenderThread);
+        thread.Name = "LiveRenderThread";
         thread.Start();
+
+        var enumerator = new MMDeviceEnumerator();
+        foreach (var device in enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active))
+        {
+            var item = new ComboBoxItem();
+            item.Tag = device;
+            item.Content = device;
+            OutputSelect.Items.Add(item);
+        }
+
+        OutputSelect.SelectionChanged += (x, y) =>
+        {
+            output.Stop();
+            var device = (OutputSelect.SelectedItem as ComboBoxItem).Content as MMDevice;
+            output = new WasapiOut(device, AudioClientShareMode.Shared, true, 0);
+            output.Init((IWaveProvider)provider);
+            output.Play();
+
+            // foreach (var VARIABLE in device.)
+            // {
+            //     
+            // }
+            // QualitySelect.Items.
+        };
+
+        QualitySelect.Items.Add(new WaveFormat(8000, 1));
+        QualitySelect.Items.Add(new WaveFormat(22100, 1));
+        QualitySelect.Items.Add(new WaveFormat(48000, 1));
+        QualitySelect.Items.Add(new WaveFormat(4 * 48000, 1));
+        QualitySelect.Items.Add(new WaveFormat(8000, 2));
+        QualitySelect.Items.Add(new WaveFormat(22100, 2));
+        QualitySelect.Items.Add(new WaveFormat(48000, 2));
+        QualitySelect.Items.Add(new WaveFormat(4 * 48000, 2));
+        QualitySelect.Items.Add(new WaveFormat(48000, 4));
+        QualitySelect.SelectedItem = new WaveFormat(48000, 2);
+        QualitySelect.SelectionChanged += (x, y) =>
+        {
+            output.Stop();
+            provider.WaveFormat = (WaveFormat)QualitySelect.SelectedItem;
+            RenderingProcess.Current.WaveFormat = provider.WaveFormat;
+            var device = (OutputSelect.SelectedItem as ComboBoxItem).Content as MMDevice;
+            output = new WasapiOut(device, AudioClientShareMode.Shared, true, 0);
+            output.Init((IWaveProvider)provider);
+            output.Play();
+        };
     }
 
     private static void LiveRenderThread()
@@ -45,13 +100,16 @@ public partial class MainWindow : Window
         mixer.MainOutput = volume.Outputs.First();
 
         var process = RenderingProcess.Current;
-        var provider = new WaveProvider(mixer);
+        MainWindow.provider = new WaveProvider(mixer);
         provider.WaveFormat = new WaveFormat(48000, 2);
-        var output = new WasapiOut(AudioClientShareMode.Shared, 0);
         output.Init((IWaveProvider)provider);
         output.Play();
 
-        UiWindow.Open(() => new MixerGui.MixerGui(mixer));
-        UiWindow.Open(() => new TimelineGui.TimelineGui(timeline));
+        UiWindow.Open(() =>
+            new TabView(
+                () => new MixerGui.MixerGui(mixer),
+                () => new TimelineGui.TimelineGui(timeline)
+            )
+        );
     }
 }

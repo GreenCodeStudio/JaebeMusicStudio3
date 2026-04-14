@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+<StackPanel>
+    
+    <ComboBox VerticalAlignment="Top" Name="OutputSelect"></ComboBox>
+    <ComboBox VerticalAlignment="Top" Name="QualitySelect"></ComboBox>
+    <Grid></Grid>
+</StackPanel>
     </Grid>
 </Window>

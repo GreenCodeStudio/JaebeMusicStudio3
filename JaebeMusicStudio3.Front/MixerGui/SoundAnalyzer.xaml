@@ -14,10 +14,10 @@
         </Grid.RowDefinitions>
         <Canvas Name="OsciloscopeCanvas" Grid.Row="0"></Canvas>
         <StackPanel Grid.Row="1" Background="Aqua" Orientation="Horizontal" >
-            <RadioButton>Osciloscope</RadioButton>
-            <RadioButton>FTT</RadioButton>
-            <controls:Number Width="200" x:Name="VerticalSize" Min="0.5" Max="2"></controls:Number> 
-            <controls:Number Width="200" x:Name="HorizontalSize" Min="1" Max="20000" Value="100"></controls:Number> 
+            <RadioButton Name="OsciloscopeRadio" GroupName="type">Osciloscope</RadioButton>
+            <RadioButton Name="FttRadio" GroupName="type">FTT</RadioButton>
+            <controls:Number Width="200" x:Name="VerticalSize" Min="0" Max="10" sliderStyle="Linear"></controls:Number> 
+            <controls:Number Width="200" x:Name="HorizontalSize" Min="1" Max="20000" Value="100" sliderStyle="Logarithmic"></controls:Number> 
         </StackPanel>
     </Grid>
 </UserControl>

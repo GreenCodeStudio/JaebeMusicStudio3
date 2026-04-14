@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using JaebeMusicStudio3.Core.AudioRendering;
+using JaebeMusicStudio3.Core.Utils;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 
@@ -74,15 +75,8 @@ public class LiveAudioInput : IAudioNode
     {
         lock (this)
         {
-            //need to copy data here
             var span1 = new Span<byte>(args.Buffer, 0, args.BytesRecorded);
-            var span = MemoryMarshal.Cast<byte, short>(span1);
-            var copied = new float[span.Length];
-            for (var i = 0; i < span.Length; i++)
-            {
-                copied[i] = (float)span[i] / (float)0x7fff;
-            }
-
+            var copied = BinaryConverter.FromBinary(_capture.WaveFormat, span1);
             buffers.Add(copied);
         }
     }
@@ -94,10 +88,24 @@ public class LiveAudioInput : IAudioNode
         {
             _capture.StopRecording();
             this._capture = new WasapiCapture(value);
-            _capture.WaveFormat = new WaveFormat(48000, 1);
+            _capture.WaveFormat = WaveFormat;
             _capture.DataAvailable += OnCaptureOnDataAvailable;
             _capture.StartRecording();
             field = value;
         }
     }
+
+    public WaveFormat WaveFormat
+    {
+        get;
+        set
+        {
+            _capture.StopRecording();
+            this._capture = new WasapiCapture(Device);
+            _capture.WaveFormat = value;
+            _capture.DataAvailable += OnCaptureOnDataAvailable;
+            _capture.StartRecording();
+            field = value;
+        }
+    }=new  WaveFormat(48000, 2);
 }

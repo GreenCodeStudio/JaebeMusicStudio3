@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <TextBox VerticalAlignment="Top" Name="Box"></TextBox>
+        <TextBox VerticalAlignment="Top" Name="Box" TextChanged="Box_OnTextChanged"></TextBox>
         <Slider VerticalAlignment="Top" Name="Slider" Margin="0,60,0,0" ValueChanged="Slider_OnValueChanged"></Slider>
     </Grid>
 </UserControl>

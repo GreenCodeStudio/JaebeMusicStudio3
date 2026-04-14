@@ -1,4 +1,6 @@
-﻿using NAudio.Wave;
+﻿using JaebeMusicStudio3.Core.Mixer;
+using JaebeMusicStudio3.Core.Utils;
+using NAudio.Wave;
 
 namespace JaebeMusicStudio3.Core.Timeline;
 
@@ -17,14 +19,13 @@ public class Timeline
                 var sound = new RecordedSound();
                 sound.WaveFormat = reader.WaveFormat;
                 long readed;
-                var samples = new float[reader.Length / (reader.WaveFormat.BitsPerSample / 8)];
-                var span = new Span<byte>(new byte[16 * 1024]);
-                while ((readed = reader.Read(span)) > 0)
-                {
-                    var subSpan = span.Slice(0, (int)readed);
-                }
+                var span = new Span<byte>(new byte[reader.Length]);
+                reader.Read(span);
+                var samples=BinaryConverter.FromBinary(reader.WaveFormat, span);
 
                 sound.Samples = samples;
+                Add(sound);
+                AudioMixer.Current.Add(sound);
             }
         });
     }

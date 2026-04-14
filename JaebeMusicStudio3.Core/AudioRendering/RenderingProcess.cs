@@ -1,9 +1,12 @@
-﻿namespace JaebeMusicStudio3.Core.AudioRendering;
+﻿using NAudio.Wave;
 
-public class RenderingProcess(bool useTimeline)
+namespace JaebeMusicStudio3.Core.AudioRendering;
+
+public class RenderingProcess(bool useTimeline, WaveFormat waveFormat)
 {
-    public static RenderingProcess Current = new RenderingProcess(false);
-    public int SampleRate { get; private set; } = 48000;
+    public static RenderingProcess Current = new RenderingProcess(false, new WaveFormat(48000, 16, 2));
+    public WaveFormat WaveFormat { get; set; } = waveFormat;
+    public int SampleRate => this.WaveFormat.SampleRate;
     public long Position { get; private set; } = 0;
     public bool UseTimeline => useTimeline;
 

@@ -9,7 +9,7 @@ using NAudio.Wave;
 
 namespace JaebeMusicStudio3.Front.TimelineGui;
 
-public partial class TimelineGui : UserControl
+public partial class TimelineGui : UserControl, ITabbableControl
 {
     private readonly Timeline timeline;
     private double SecondsPerPixel = 0.01;
@@ -69,6 +69,16 @@ public partial class TimelineGui : UserControl
                 control.Width = recordedSoundInProgress.LengthSeconds / SecondsPerPixel;
                 line.Children.Add(control);
                 recordedSoundInProgress.Changed += ()=>Dispatcher.Invoke(Render);
+            }else if (item is RecordedSound recordedSound)
+            {
+                var line = new Grid();
+                line.Height = 100;
+                Lines.Children.Insert(Lines.Children.Count - 1, line);
+                var control = new TimelineItemGui(recordedSound, SecondsPerPixel);
+                control.HorizontalAlignment = HorizontalAlignment.Left;
+                control.Width = recordedSound.LengthSeconds / SecondsPerPixel;
+                line.Children.Add(control);
+                recordedSound.Changed += ()=>Dispatcher.Invoke(Render);
             }
         }
     }
@@ -121,11 +131,14 @@ public partial class TimelineGui : UserControl
 
     private void Play(object sender, RoutedEventArgs e)
     {
-        RenderingProcess.Current = new RenderingProcess(true);
+        RenderingProcess.Current = new RenderingProcess(true, RenderingProcess.Current.WaveFormat);
     }
 
     private void Stop(object sender, RoutedEventArgs e)
     {
-        RenderingProcess.Current = new RenderingProcess(false);
+        RenderingProcess.Current = new RenderingProcess(false, RenderingProcess.Current.WaveFormat);
     }
+
+    public string Title => "Timeline";
+    public event Action? ChangedMetadata;
 }
