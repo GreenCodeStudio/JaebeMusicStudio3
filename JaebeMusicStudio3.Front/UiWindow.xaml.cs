@@ -17,10 +17,7 @@ public partial class UiWindow : Window
         this.ContentWrapper.Children.Add(control);
         this.Title = control.ToString();
         Closed += (s, e) => { System.Windows.Threading.Dispatcher.ExitAllFrames(); };
-        DuplicateButton.Click += (s, e) =>
-        {
-            Open(_createMethod);
-        };
+
         if(control is ITabbableControl tabbable)
         {
             this.Title = tabbable.Title;
