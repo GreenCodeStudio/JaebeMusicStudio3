@@ -8,6 +8,8 @@ public class Timeline
 {
     private List<RecordedSound> _items = new List<RecordedSound>();
     public IReadOnlyList<RecordedSound> Items => _items.ToList();
+    public double TotalLength => 60; //tmp
+
     public event Action Changed;
 
     public void LoadFileAsync(string fileName)
@@ -21,7 +23,7 @@ public class Timeline
                 long readed;
                 var span = new Span<byte>(new byte[reader.Length]);
                 reader.Read(span);
-                var samples=BinaryConverter.FromBinary(reader.WaveFormat, span);
+                var samples = BinaryConverter.FromBinary(reader.WaveFormat, span);
 
                 sound.Samples = samples;
                 Add(sound);

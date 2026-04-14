@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using JaebeMusicStudio3.Core.AudioRendering;
@@ -51,7 +52,9 @@ public partial class TimelineGui : UserControl, ITabbableControl
 
     private void Render()
     {
+        HorizontalScrollBar.Maximum = timeline.TotalLength;
         this.TimelineMarker.SecondsPerPixel = SecondsPerPixel;
+        this.TimelineMarker.OffsetInSeconds = HorizontalScrollBar.Value;
         while (Lines.Children.Count > 2)
         {
             Lines.Children.RemoveAt(1);
@@ -67,9 +70,11 @@ public partial class TimelineGui : UserControl, ITabbableControl
                 var control = new TimelineItemGui(recordedSoundInProgress, SecondsPerPixel);
                 control.HorizontalAlignment = HorizontalAlignment.Left;
                 control.Width = recordedSoundInProgress.LengthSeconds / SecondsPerPixel;
+                control.Margin = new Thickness(-HorizontalScrollBar.Value / SecondsPerPixel, 0, 0, 0);
                 line.Children.Add(control);
-                recordedSoundInProgress.Changed += ()=>Dispatcher.Invoke(Render);
-            }else if (item is RecordedSound recordedSound)
+                recordedSoundInProgress.Changed += () => Dispatcher.Invoke(Render);
+            }
+            else if (item is RecordedSound recordedSound)
             {
                 var line = new Grid();
                 line.Height = 100;
@@ -77,8 +82,9 @@ public partial class TimelineGui : UserControl, ITabbableControl
                 var control = new TimelineItemGui(recordedSound, SecondsPerPixel);
                 control.HorizontalAlignment = HorizontalAlignment.Left;
                 control.Width = recordedSound.LengthSeconds / SecondsPerPixel;
+                control.Margin = new Thickness(-HorizontalScrollBar.Value / SecondsPerPixel, 0, 0, 0);
                 line.Children.Add(control);
-                recordedSound.Changed += ()=>Dispatcher.Invoke(Render);
+                recordedSound.Changed += () => Dispatcher.Invoke(Render);
             }
         }
     }
@@ -141,4 +147,9 @@ public partial class TimelineGui : UserControl, ITabbableControl
 
     public string Title => "Timeline";
     public event Action? ChangedMetadata;
+
+    private void ScrollBar_OnScroll(object sender, ScrollEventArgs e)
+    {
+        Render();
+    }
 }

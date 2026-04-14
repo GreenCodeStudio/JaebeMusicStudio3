@@ -18,7 +18,7 @@ public partial class MixerGui : UserControl
         var add = new MenuItem();
         add.Header = "Add";
         contextMenu.Items.Add(add);
-        
+
         var mix = new MenuItem();
         mix.Header = "Mix";
         mix.Click += (s, e) =>
@@ -27,7 +27,7 @@ public partial class MixerGui : UserControl
             Mixer.Add(node);
         };
         add.Items.Add(mix);
-        
+
         var liveAudioInput = new MenuItem();
         liveAudioInput.Header = "LiveAudioInput";
         liveAudioInput.Click += (s, e) =>
@@ -82,6 +82,20 @@ public partial class MixerGui : UserControl
             };
             // nodeGui.MouseUp += (sender, args) => { ReleaseMouseCapture(); };
             nodeGui.Connect += (input, output) => { Mixer.Connect(output, input); };
+            nodeGui.DisconnectByOutput += (output) =>
+            {
+                foreach (var keyValuePair in Mixer.Connections.Where(x => x.Value == output))
+                {
+                    Mixer.Disconnect(keyValuePair);
+                }
+            };
+            nodeGui.DisconnectByInput += (input) =>
+            {
+                foreach (var keyValuePair in Mixer.Connections.Where(x => x.Key == input))
+                {
+                    Mixer.Disconnect(keyValuePair);
+                }
+            };
         }
 
         foreach (var x in Mixer.Connections)

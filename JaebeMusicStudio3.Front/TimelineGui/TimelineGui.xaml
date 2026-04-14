@@ -23,6 +23,7 @@
                 <Grid Name="NextLine" Background="AntiqueWhite" Height="100"></Grid>
             </StackPanel>
                 </Grid>
+            <ScrollBar Orientation="Horizontal" Scroll="ScrollBar_OnScroll" Name="HorizontalScrollBar"></ScrollBar>
         </StackPanel>
     </Grid>
 </UserControl>

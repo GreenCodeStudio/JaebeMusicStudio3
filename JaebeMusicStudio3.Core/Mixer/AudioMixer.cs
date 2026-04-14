@@ -105,4 +105,13 @@ public class AudioMixer
         }
         Changed?.Invoke();
     }
+
+    public void Disconnect(KeyValuePair<NodeInputDefinition, NodeOutputDefinition> keyValuePair)
+    {
+        lock (this)
+        {
+            _connections.Remove(keyValuePair.Key);
+        }
+        Changed?.Invoke();
+    }
 }

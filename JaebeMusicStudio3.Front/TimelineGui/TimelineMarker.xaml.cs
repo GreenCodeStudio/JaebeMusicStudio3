@@ -20,7 +20,7 @@ public partial class TimelineMarker : UserControl
         }
     } = 0.01;
 
-    public double OffsetInPixels
+    public double OffsetInSeconds
     {
         get;
         set
@@ -44,12 +44,14 @@ public partial class TimelineMarker : UserControl
     {
         MainGrid.Children.Clear();
         var stepInSeconds = 1;
-        var lengthInSeconds = LengthInPixels * SecondsPerPixel;
-        for (var i = 0; i <= lengthInSeconds; i += stepInSeconds)
+        var lengthInSeconds = ActualWidth * SecondsPerPixel;
+        for (var i = Math.Floor(OffsetInSeconds / stepInSeconds) * stepInSeconds;
+             i <= lengthInSeconds + OffsetInSeconds;
+             i += stepInSeconds)
         {
             var label = new Label();
             label.Content = i.ToString();
-            label.Margin = new System.Windows.Thickness(i / SecondsPerPixel, 0, 0, 0);
+            label.Margin = new System.Windows.Thickness((i - OffsetInSeconds) / SecondsPerPixel, 0, 0, 0);
             label.VerticalAlignment = System.Windows.VerticalAlignment.Top;
             label.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
             MainGrid.Children.Add(label);

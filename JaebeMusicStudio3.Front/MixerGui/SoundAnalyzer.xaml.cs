@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using JaebeMusicStudio3.Core.AudioNodes;
 using JaebeMusicStudio3.Core.AudioRendering;
+using JaebeMusicStudio3.Core.Utils;
 using Optimalization.Fourier;
 
 namespace JaebeMusicStudio3.Front.MixerGui;
@@ -18,7 +19,7 @@ public partial class SoundAnalyzer : UserControl, IDisposable
         this.NodeOutputDefinition = nodeOutputDefinition;
         InitializeComponent();
         WaveProvider.ChunkCreated += ChunkCreated;
-        CompositionTarget.Rendering += (s, e) => { Render(); };
+        CompositionTarget.Rendering += (s, e) => { Dispatcher.Invoke(() => Render()); };
     }
 
     public NodeOutputDefinition NodeOutputDefinition { get; set; }
@@ -37,14 +38,46 @@ public partial class SoundAnalyzer : UserControl, IDisposable
             if (Buffer.SampleRate != null)
             {
                 var horizontalSize = HorizontalSize.Value;
-                var samplesPerWidth = (double)_horizontalSizeInSamples;
-                var i = 0;
-                foreach (var sample in Buffer.Samples.Reverse())
+                var divider = (double)_horizontalSizeInSamples / width*2;
+                var dividerInt = (int)Math.Pow(2, Math.Round(Math.Log2(divider)));
+                if (dividerInt >= 4)
                 {
-                    line.Points.Add(new Point((1 - i / samplesPerWidth) * width,
-                        sample * verticalSize * halfHeight + halfHeight));
-                    i++;
-                    if (i > samplesPerWidth) break;
+                    line.Fill = System.Windows.Media.Brushes.Green;
+                    var dividedSamplesPerWidth = (double)_horizontalSizeInSamples / dividerInt;
+                    float[] samples;
+                    lock (Buffer)
+                    {
+                        samples = Buffer.Samples.Reverse().Take(_horizontalSizeInSamplesRounded).ToArray();
+                    }
+
+                    var (min, max) = MinMax.DivideByPow2(samples, dividerInt);
+                    for (var i = 0; i < min.Length; i++)
+                    {
+                        line.Points.Add(new Point((1 - i / dividedSamplesPerWidth) * width,
+                            min[i] * verticalSize * halfHeight + halfHeight));
+                    }
+
+                    for (var i = max.Length - 1; i >= 0; i--)
+                    {
+                        line.Points.Add(new Point((1 - i / dividedSamplesPerWidth) * width,
+                            max[i] * verticalSize * halfHeight + halfHeight));
+                    }
+                }
+                else
+                {
+                    line.Fill = null;
+                    var samplesPerWidth = (double)_horizontalSizeInSamples;
+                    var i = 0;
+                    lock (Buffer)
+                    {
+                        foreach (var sample in Buffer.Samples.Reverse())
+                        {
+                            line.Points.Add(new Point((1 - i / samplesPerWidth) * width,
+                                sample * verticalSize * halfHeight + halfHeight));
+                            i++;
+                            if (i > samplesPerWidth) break;
+                        }
+                    }
                 }
             }
         }
@@ -56,25 +89,28 @@ public partial class SoundAnalyzer : UserControl, IDisposable
             var line = new Polyline();
             line.Stroke = System.Windows.Media.Brushes.Blue;
             OsciloscopeCanvas.Children.Add(line);
-            var samples = Buffer.Samples.Reverse().Take(_horizontalSizeInSamplesRounded);
-            if (samples.Count() != _horizontalSizeInSamplesRounded)
+            lock (Buffer)
             {
-                return;
-            }
-
-            var fft = FFT.Execute(samples.ToArray());
-            var fftModulos=FFT.GetModulos(fft.real, fft.imaginary);
-            if (Buffer.SampleRate != null)
-            {
-                var horizontalSize = HorizontalSize.Value;
-                var samplesPerWidth = _horizontalSizeInSamplesRounded*1.0;
-                var i = 0;
-                foreach (var sample in fftModulos)
+                var samples = Buffer.Samples.Reverse().Take(_horizontalSizeInSamplesRounded);
+                if (samples.Count() != _horizontalSizeInSamplesRounded)
                 {
-                    line.Points.Add(new Point((i / samplesPerWidth) * width,
-                        sample * verticalSize * height * -1d + height));
-                    i++;
-                    if (i > samplesPerWidth) break;
+                    return;
+                }
+
+                var fft = FFT.Execute(samples.ToArray());
+                var fftModulos = FFT.GetModulos(fft.real, fft.imaginary);
+                if (Buffer.SampleRate != null)
+                {
+                    var horizontalSize = HorizontalSize.Value;
+                    var samplesPerWidth = _horizontalSizeInSamplesRounded * 1.0;
+                    var i = 0;
+                    foreach (var sample in fftModulos)
+                    {
+                        line.Points.Add(new Point((i / samplesPerWidth) * width,
+                            sample * verticalSize * height * -1d + height));
+                        i++;
+                        if (i > samplesPerWidth) break;
+                    }
                 }
             }
         }
@@ -105,15 +141,18 @@ public partial class SoundAnalyzer : UserControl, IDisposable
     private void ChunkCreated(RenderingChunk chunk)
     {
         var response = chunk.GetResponse(NodeOutputDefinition).Result;
-        Dispatcher.Invoke(() =>
+        Task.Run(() =>
         {
             var horizontalSize = HorizontalSize.Value;
             if (response is SingleChannelAudioBuffer)
             {
-                var singleBuffer = response as SingleChannelAudioBuffer;
-                Buffer.SampleTotalCapacity = _horizontalSizeInSamplesRounded;
+                lock (Buffer)
+                {
+                    var singleBuffer = response as SingleChannelAudioBuffer;
+                    Buffer.SampleTotalCapacity = _horizontalSizeInSamplesRounded;
 
-                Buffer.Add(singleBuffer);
+                    Buffer.Add(singleBuffer);
+                }
             }
         });
     }

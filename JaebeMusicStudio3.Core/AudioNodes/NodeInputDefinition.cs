@@ -20,5 +20,12 @@ public class NodeInputDefinition
     {
         return HashCode.Combine(Name, Node);
     }
-    
+    public static bool operator ==(NodeInputDefinition left, NodeInputDefinition right)
+    {
+        return left.Equals(right);
+    }
+    public static bool operator !=(NodeInputDefinition left, NodeInputDefinition right)
+    {
+        return !left.Equals(right);
+    }
 }

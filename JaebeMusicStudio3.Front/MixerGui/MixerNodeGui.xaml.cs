@@ -10,6 +10,8 @@ namespace JaebeMusicStudio3.Front.MixerGui;
 public partial class MixerNodeGui : UserControl
 {
     public event Action<NodeInputDefinition, NodeOutputDefinition> Connect;
+    public event Action< NodeOutputDefinition> DisconnectByOutput;
+    public event Action<NodeInputDefinition> DisconnectByInput;
 
     public MixerNodeGui(IAudioNode node)
     {
@@ -36,14 +38,25 @@ public partial class MixerNodeGui : UserControl
                         (NodeOutputDefinition)y.Data.GetData(typeof(NodeOutputDefinition)));
                 }
             };
+            var contextMenu = new ContextMenu();
+            var disconnect = new MenuItem();
+            disconnect.Header = "Disconnect";
+            disconnect.Click += (x, y) =>
+            {
+                DisconnectByInput?.Invoke(nodeInputDefinition);
+            };
+            contextMenu.Items.Add(disconnect);
+            item.ContextMenu = contextMenu;
             this.Inputs.Children.Add(item);
         }
 
         foreach (var nodeOutputDefinition in node.Outputs)
         {
-            var item = new Label();
+            var item = new Grid();
+            var label = new Label();
+            item.Children.Add(label);
             item.Height = 30;
-            item.Content = nodeOutputDefinition.Name;
+            label.Content = nodeOutputDefinition.Name;
             item.AllowDrop = true;
             item.MouseDown += (x, y) =>
             {
@@ -66,7 +79,19 @@ public partial class MixerNodeGui : UserControl
             soundAnalizer.Header = "Sound Analizer";
             soundAnalizer.Click += (x, y) => { UiWindow.Open(() => new SoundAnalyzer(nodeOutputDefinition)); };
             contextMenu.Items.Add(soundAnalizer);
+            var disconnect = new MenuItem();
+            disconnect.Header = "Disconnect";
+            disconnect.Click += (x, y) =>
+            {
+                DisconnectByOutput?.Invoke(nodeOutputDefinition);
+            };
+            contextMenu.Items.Add(disconnect);
             item.ContextMenu = contextMenu;
+            
+            var nanoSoundIndicator=new NanoSoundAnalyzer(nodeOutputDefinition);
+            nanoSoundIndicator.HorizontalAlignment = HorizontalAlignment.Right;
+            nanoSoundIndicator.VerticalAlignment = VerticalAlignment.Center;
+            item.Children.Add(nanoSoundIndicator);
         }
     }
 }
