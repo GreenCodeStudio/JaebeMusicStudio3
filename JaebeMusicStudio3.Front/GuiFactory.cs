@@ -16,6 +16,10 @@ public class GuiFactory
         {
             return new LiveAudioInputGui(x as LiveAudioInput);
         }
+        else  if (x is Overdrive)
+        {
+            return new OverdriveNodeGui(x as Overdrive);
+        }
         else
         {
             return null;

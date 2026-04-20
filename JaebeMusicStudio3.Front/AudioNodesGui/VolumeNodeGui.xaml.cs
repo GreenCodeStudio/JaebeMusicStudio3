@@ -8,7 +8,7 @@ public partial class VolumeNodeGui : UserControl
     public VolumeNodeGui(VolumeNode volumeNode)
     {
         InitializeComponent();
-        VolumeSlider.Value = volumeNode.Volume;
-        VolumeSlider.ValueChanged += (x) => { volumeNode.Volume = (float)x; };
+        VolumeValueSlider.Value = volumeNode.Volume;
+        VolumeValueSlider.ValueChanged += (x) => { volumeNode.Volume = (float)x; };
     }
 }

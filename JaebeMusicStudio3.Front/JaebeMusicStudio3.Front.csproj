@@ -17,4 +17,12 @@
       <Folder Include="Gui\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Page Update="AudioNodesGui\OverdriveNodeGui.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+    </ItemGroup>
+
 </Project>

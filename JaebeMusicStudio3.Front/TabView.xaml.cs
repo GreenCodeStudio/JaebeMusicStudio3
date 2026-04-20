@@ -30,10 +30,9 @@ public partial class TabView : UserControl, ITabbableControl
         }
 
         var tab = new Grid();
-        tab.Margin = new Thickness(4, 4, 4, -1);
+        tab.Margin = new Thickness(4, 4, 4, -2);
         var rectangle = new System.Windows.Shapes.Rectangle();
         rectangle.Fill = System.Windows.Media.Brushes.White;
-        rectangle.Stroke = System.Windows.Media.Brushes.Black;
         tab.Children.Add(rectangle);
         var inside = new StackPanel();
         tab.Children.Add(inside);
@@ -44,22 +43,25 @@ public partial class TabView : UserControl, ITabbableControl
         var content = createControl();
         ContentWrapper.Children.Add(content);
         title.Text = (content as ITabbableControl)?.Title ?? content.ToString();
+        title.HorizontalAlignment = HorizontalAlignment.Center;
+        title.VerticalAlignment = VerticalAlignment.Center;
+title.Margin = new Thickness(4, 0, 4, 4);
 
         var duplicateButton = new Button();
         duplicateButton.Content = "D";
-        duplicateButton.Margin = new Thickness(4);
+        duplicateButton.Margin = new Thickness(2,4,2,8);
         duplicateButton.Click += (s, e) => { Add(createControl); };
         inside.Children.Add(duplicateButton);
 
         var newWindowButton = new Button();
         newWindowButton.Content = "N";
-        newWindowButton.Margin = new Thickness(4);
+        newWindowButton.Margin = new Thickness(2,4,2,8);
         newWindowButton.Click += (s, e) => { UiWindow.Open(() => new TabView(createControl)); };
         inside.Children.Add(newWindowButton);
         
         var closeButton = new Button();
         closeButton.Content = "X";
-        closeButton.Margin = new Thickness(4);
+        closeButton.Margin = new Thickness(2,4,2,8);
         closeButton.Click += (s, e) =>
         {
             TabsWrapper.Children.Remove(tab);

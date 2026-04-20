@@ -12,8 +12,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Rectangle Grid.Row="1" Fill="#fff" Stroke="Black" Margin="3,-2,3,3"></Rectangle>
-            <Grid Name="ContentWrapper" Row="1" Margin="4,-1,4,4"></Grid>
+            <Rectangle Grid.Row="1" Fill="#fff"  Margin="0"></Rectangle>
+            <Grid Name="ContentWrapper" Row="1" Margin="4,4,4,4"></Grid>
             <ScrollViewer Grid.Row="0">
                 <Grid>
                     <StackPanel Name="TabsWrapper" Orientation="Horizontal"></StackPanel>

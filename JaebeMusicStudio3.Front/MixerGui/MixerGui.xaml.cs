@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Shapes;
 using JaebeMusicStudio3.Core.AudioNodes;
 using JaebeMusicStudio3.Core.Mixer;
@@ -36,9 +37,36 @@ public partial class MixerGui : UserControl
             Mixer.Add(node);
         };
         add.Items.Add(liveAudioInput);
+        var overdrive = new MenuItem();
+        overdrive.Header = "Overdrive";
+        overdrive.Click += (s, e) =>
+        {
+            var node = new Overdrive();
+            Mixer.Add(node);
+        };
+        add.Items.Add(overdrive);
+
+        this.MouseMove += (sender, args) =>
+        {
+            if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed && _movingNode != null)
+            {
+                var pos = Mixer.GetPosition(_movingNode);
+                pos.X += args.MouseDevice.GetPosition(Plane).X - _movingPoint.Value.X;
+                pos.Y += args.MouseDevice.GetPosition(Plane).Y - _movingPoint.Value.Y;
+                _movingPoint = args.MouseDevice.GetPosition(Plane);
+                Mixer.SetPosition(_movingNode, pos);
+            }
+        };
+        this.MouseUp += (sender, args) =>
+        {
+            _movingNode = null;
+            _movingPoint = null;
+        };
     }
 
     public AudioMixer Mixer { get; set; }
+    private IAudioNode _movingNode = null;
+    private Point? _movingPoint = null;
 
     private void Render()
     {
@@ -69,17 +97,12 @@ public partial class MixerGui : UserControl
             };
             nodeGui.ContextMenu = new ContextMenu();
 
-            // nodeGui.MouseDown += (sender, args) => { CaptureMouse(); };
-            nodeGui.MouseMove += (sender, args) =>
+            nodeGui.MouseDown += (sender, args) =>
             {
-                if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
-                {
-                    var pos = Mixer.GetPosition(node);
-                    pos.X += args.MouseDevice.GetPosition(Plane).X - nodeGui.Margin.Left - nodeGui.Width / 2;
-                    pos.Y += args.MouseDevice.GetPosition(Plane).Y - nodeGui.Margin.Top - nodeGui.Height / 2;
-                    Mixer.SetPosition(node, pos);
-                }
+                _movingNode = node;
+                _movingPoint = args.MouseDevice.GetPosition(Plane);
             };
+
             // nodeGui.MouseUp += (sender, args) => { ReleaseMouseCapture(); };
             nodeGui.Connect += (input, output) => { Mixer.Connect(output, input); };
             nodeGui.DisconnectByOutput += (output) =>

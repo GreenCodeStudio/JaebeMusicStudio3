@@ -27,8 +27,8 @@ public partial class NanoSoundAnalyzer : UserControl
                 var (average, max) = MinMax.SingleAbsAvgMaxFast(responseTyped.AsSpan);
                 Dispatcher.BeginInvoke(() =>
                 {
-                    indicator.Fill=new SolidColorBrush(Color.FromArgb(0xFF, (byte)(average * 0xFF), (byte)(average * 0xFF), 0));
-                    indicator.Stroke=new SolidColorBrush(Color.FromArgb(0xFF, (byte)(max * 0xFF), (byte)(max * 0xFF), 0));
+                    indicator.Fill=new SolidColorBrush(MinMax.ValueToColor(average));
+                    indicator.Stroke=new SolidColorBrush(MinMax.ValueToColor(max));
                 });
             }
         });

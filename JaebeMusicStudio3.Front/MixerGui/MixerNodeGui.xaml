@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:JaebeMusicStudio3.Front.MixerGui"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Background="BlueViolet">
+    <Grid Background="#8bb">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
@@ -16,7 +16,7 @@
                 <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Label Name="Title"  Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0">Mixer node</Label>
-        <StackPanel Name="Inputs" Background="Chartreuse" Grid.Column="0" Grid.Row="1"></StackPanel>
-        <StackPanel Name="Outputs" Background="AliceBlue" Grid.Column="1" Grid.Row="1"></StackPanel>
+        <StackPanel Name="Inputs" Background="#add" Grid.Column="0" Grid.Row="1"></StackPanel>
+        <StackPanel Name="Outputs" Background="#add" Grid.Column="1" Grid.Row="1"></StackPanel>
     </Grid>
 </UserControl>

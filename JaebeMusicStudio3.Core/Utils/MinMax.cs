@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Windows.Media;
 
 namespace JaebeMusicStudio3.Core.Utils;
 
@@ -47,5 +48,17 @@ public class MinMax
         }
 
         return (averageSum / responseTypedAsSpan.Length, max);
+    }
+
+    public static Color ValueToColor(float x)
+    {
+        var r = x>1?1:x;
+        var g = MathF.Log10(x) / 10 + 1;
+        var b = MathF.Log10(x);
+        if (g < 0) g = 0;
+        else if (g > 1) g = 1;
+        if (b < 0) b = 0;
+        else if (b > 1) b = 1;
+        return Color.FromArgb(0xFF, (byte)(r * 0xFF), (byte)(g * 0xFF), (byte)(b * 0xFF));
     }
 }

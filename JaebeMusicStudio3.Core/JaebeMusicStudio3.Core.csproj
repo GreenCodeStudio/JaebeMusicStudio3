@@ -11,4 +11,10 @@
       <PackageReference Include="NAudio" Version="2.3.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="PresentationCore">
+        <HintPath>..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\9.0.14\PresentationCore.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

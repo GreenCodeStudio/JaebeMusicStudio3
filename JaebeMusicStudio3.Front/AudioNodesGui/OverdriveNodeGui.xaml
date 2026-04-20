@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="JaebeMusicStudio3.Front.AudioNodesGui.VolumeNodeGui"
+﻿<UserControl x:Class="JaebeMusicStudio3.Front.AudioNodesGui.OverdriveNodeGui"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,10 +9,12 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <StackPanel>
-            <controls:VolumeSlider x:Name="VolumeValueSlider"/>
-        <controls:LabeledControl Title="Volume">
-            <Button>aaaa</Button>
-        </controls:LabeledControl>
+            <controls:LabeledControl2 Title="Volume">
+                <controls:VolumeSlider Max="10" x:Name="VolumeValueSlider"/>
+            </controls:LabeledControl2>
+            <controls:LabeledControl2 Title="Limit">
+                <controls:VolumeSlider x:Name="LimitSlider"/>
+            </controls:LabeledControl2>
         </StackPanel>
     </Grid>
 </UserControl>
