@@ -1,5 +1,5 @@
-﻿using System.Numerics;
-using System.Windows.Media;
+﻿using System.Drawing;
+using System.Numerics;
 
 namespace JaebeMusicStudio3.Core.Utils;
 
