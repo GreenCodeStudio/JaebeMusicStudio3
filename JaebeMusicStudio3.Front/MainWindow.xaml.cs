@@ -11,8 +11,10 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using JaebeMusicStudio3.Core.AudioNodes;
 using JaebeMusicStudio3.Core.AudioRendering;
+using JaebeMusicStudio3.Core.IO;
 using JaebeMusicStudio3.Core.Mixer;
 using JaebeMusicStudio3.Core.Timeline;
+using JaebeMusicStudio3.Front.IO;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 
@@ -29,6 +31,8 @@ public partial class MainWindow : Window
     static MainWindow()
     {
         output = new WasapiOut(AudioClientShareMode.Shared, 0);
+        IOWrapper.Add(KeyboardInput.singleton1);
+        IOWrapper.Add(KeyboardInput.singleton2);
     }
 
     public MainWindow()
@@ -100,7 +104,7 @@ public partial class MainWindow : Window
         mixer.MainOutput = volume.Outputs.First();
 
         var instrument = new Instrument();
-         mixer.Add(instrument);
+        mixer.Add(instrument);
         var noteLine = new NoteLine()
         {
             Instrument = instrument,
@@ -137,7 +141,8 @@ public partial class MainWindow : Window
         UiWindow.Open(() =>
             new TabView(
                 () => new MixerGui.MixerGui(mixer),
-                () => new TimelineGui.TimelineGui(timeline)
+                () => new TimelineGui.TimelineGui(timeline),
+                () => new IOGui()
             )
         );
     }
