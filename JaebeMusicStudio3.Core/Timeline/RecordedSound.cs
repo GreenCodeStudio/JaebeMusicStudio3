@@ -20,7 +20,7 @@ public class RecordedSound : ITimelineItem, IAudioNode
     }
 
     public double LengthSeconds => (WaveFormat != null) ? ((Samples?.Length ?? 0) / (double)WaveFormat.SampleRate) : 0;
-
+    public double OffsetSeconds { get; set; }
 
     public IEnumerable<NodeInputDefinition> Inputs => new List<NodeInputDefinition>()
     {

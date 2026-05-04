@@ -87,7 +87,7 @@ public partial class MainWindow : Window
     private static void LiveRenderThread()
     {
         var mixer = AudioMixer.Current;
-        var timeline = new Timeline();
+        var timeline = Timeline.Current;
         var dummy = new DummyNoise();
         var volume = new VolumeNode();
         var input = new LiveAudioInput();
@@ -98,6 +98,35 @@ public partial class MainWindow : Window
         // mixer.Connect(dummy.Outputs.First(), volume.Inputs.First());
         // mixer.Connect(input.Outputs.First(), volume.Inputs.First());
         mixer.MainOutput = volume.Outputs.First();
+
+        var instrument = new Instrument();
+         mixer.Add(instrument);
+        var noteLine = new NoteLine()
+        {
+            Instrument = instrument,
+            Notes = new List<Note>()
+            {
+                new Note()
+                {
+                    Start = 0,
+                    Length = 0.5,
+                    Pitch = 440
+                },
+                new Note()
+                {
+                    Start = 1,
+                    Length = 0.5,
+                    Pitch = 440
+                },
+                new Note()
+                {
+                    Start = 2,
+                    Length = 0.5,
+                    Pitch = 440 * Math.Pow(2, 4.0 / 12)
+                }
+            }
+        };
+        timeline.Add(noteLine);
 
         var process = RenderingProcess.Current;
         MainWindow.provider = new WaveProvider(mixer);

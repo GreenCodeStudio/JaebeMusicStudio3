@@ -6,8 +6,9 @@ namespace JaebeMusicStudio3.Core.Timeline;
 
 public class Timeline
 {
-    private List<RecordedSound> _items = new List<RecordedSound>();
-    public IReadOnlyList<RecordedSound> Items => _items.ToList();
+    public static Timeline Current = new Timeline();
+    private List<ITimelineItem> _items = new List<ITimelineItem>();
+    public IReadOnlyList<ITimelineItem> Items => _items.ToList();
     public double TotalLength => 60; //tmp
 
     public event Action Changed;
@@ -32,7 +33,7 @@ public class Timeline
         });
     }
 
-    public void Add(RecordedSound x)
+    public void Add(ITimelineItem x)
     {
         _items.Add(x);
         Changed?.Invoke();
