@@ -22,8 +22,10 @@ public class DummyNoise : IAudioNode
         var random = new Random();
         for (var i = 0; i < chunk.Length; i++)
         {
+            // var x = (chunk.Start + i) % 256;
+            // buffer.Data[i] = (x<128?1:-1) * 0.01f;
             var x = (chunk.Start + i) % 256;
-            buffer.Data[i] = (x<128?1:-1) * 0.01f;
+            buffer.Data[i] = MathF.Sin((float)x / 256f * 2f * MathF.PI) * 0.1f;
         }
 
         return new Dictionary<string, object>() { { "main", buffer } };

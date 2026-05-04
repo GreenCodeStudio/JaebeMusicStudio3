@@ -48,6 +48,27 @@ public class VolumeNode : IAudioNode
                 outputSpan[i] = inputSpan[i] * volume;
             }
         }
+        
+        
+        //tmp start
+        // var filledLength = (int)Math.Pow(2, Math.Ceiling(Math.Log2(output.Data.Length)));
+        // var filled=new float[filledLength];
+        // output.AsSpan.CopyTo(filled);
+        // var fft=FFT.Execute(filled);
+        //
+        // for (int i = 0; i < output.Data.Length; i++)
+        // {
+        //     var sample = 0f;
+        //     var iFloat=1-(float)i/filledLength;
+        //     for(var j=0;j<filledLength;j++)
+        //     {
+        //         sample+=MathF.Sin(2*MathF.PI*iFloat*j)*fft.imaginary[j]+MathF.Cos(2*MathF.PI*iFloat*j)*fft.real[j];
+        //     }
+        //     output.Data[i] = sample/filledLength;
+        // }
+        //
+        //
+        //tmp end
 
         return Task.FromResult(new Dictionary<string, object>() { { "output", output } });
     }
