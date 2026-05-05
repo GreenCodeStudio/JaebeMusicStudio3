@@ -19,4 +19,12 @@ public class RenderingProcess(bool useTimeline, WaveFormat waveFormat)
             return ret;
         }
     }
+    public RenderingChunk GetEmptyChunk()
+    {
+        lock (this)
+        {
+            var ret = new RenderingChunk() { Process = this, Start = Position, Length = 0 };
+            return ret;
+        }
+    }
 }

@@ -8,6 +8,7 @@ public class RenderingChunk
     public long Start { get; set; }
     public long Length { get; set; }
     public Dictionary<IAudioNode, Task<Dictionary<string, object>>> Responses { get; } = new();
+    public double StartSeconds =>Start / (double)Process.SampleRate;
 
     public async Task<object> GetResponse(NodeOutputDefinition x)
     {

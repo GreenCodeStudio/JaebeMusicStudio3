@@ -86,6 +86,18 @@ public partial class TimelineGui : UserControl, ITabbableControl
                 line.Children.Add(control);
                 recordedSound.Changed += () => Dispatcher.Invoke(Render);
             }
+            else if (item is NoteLine noteLine)
+            {
+                var line = new Grid();
+                line.Height = 100;
+                Lines.Children.Insert(Lines.Children.Count - 1, line);
+                var control = new TimelineItemGui(noteLine, SecondsPerPixel);
+                control.HorizontalAlignment = HorizontalAlignment.Left;
+                control.Width = noteLine.Notes.Max(x => x.Start + x.Length) * 60 / noteLine.Tempo / SecondsPerPixel;
+                control.Margin = new Thickness(-HorizontalScrollBar.Value / SecondsPerPixel, 0, 0, 0);
+                line.Children.Add(control);
+                noteLine.Changed += () => Dispatcher.Invoke(Render);
+            }
         }
     }
 

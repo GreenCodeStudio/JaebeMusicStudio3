@@ -103,8 +103,8 @@ public class KeyboardInput : INotesInput
             yield return (Key.OemComma, 440 * MathF.Pow(2, 3f / 12));
             yield return (Key.L, 440 * MathF.Pow(2, 4f / 12));
             yield return (Key.OemPeriod, 440 * MathF.Pow(2, 5f / 12));
-            yield return (Key.OemQuestion, 440 * MathF.Pow(2, 6f / 12));
-            yield return (Key.Oem1, 440 * MathF.Pow(2, 7f / 12));
+            yield return (Key.Oem1, 440 * MathF.Pow(2, 6f / 12));
+            yield return (Key.OemQuestion, 440 * MathF.Pow(2, 7f / 12));
             yield return (Key.Oem2, 440 * MathF.Pow(2, 8f / 12));
             yield return (Key.Oem7, 440 * MathF.Pow(2, 9f / 12));
             yield return (Key.RightShift, 440 * MathF.Pow(2, 10f / 12));
@@ -117,8 +117,8 @@ public class KeyboardInput : INotesInput
             yield return (Key.W, 440 * MathF.Pow(2, 5f / 12));
             yield return (Key.D3, 440 * MathF.Pow(2, 6f / 12));
             yield return (Key.E, 440 * MathF.Pow(2, 7f / 12));
-            yield return (Key.D4, 440 * MathF.Pow(2, 8f / 12));
-            yield return (Key.R, 440 * MathF.Pow(2, 9f / 12));
+            yield return (Key.R, 440 * MathF.Pow(2, 8f / 12));
+            yield return (Key.D5, 440 * MathF.Pow(2, 9f / 12));
             yield return (Key.T, 440 * MathF.Pow(2, 10f / 12));
             yield return (Key.D6, 440 * MathF.Pow(2, 11f / 12));
             yield return (Key.Y, 440 * MathF.Pow(2, 12f / 12));
@@ -131,7 +131,7 @@ public class KeyboardInput : INotesInput
             yield return (Key.P, 440 * MathF.Pow(2, 19f / 12));
             yield return (Key.OemOpenBrackets, 440 * MathF.Pow(2, 20f / 12));
             yield return (Key.Oem6, 440 * MathF.Pow(2, 21f / 12));
-            yield return (Key.OemQuotes, 440 * MathF.Pow(2, 22f / 12));
+            yield return (Key.OemQuotes, 440 * MathF.Pow(2, 23f / 12));
         }
     }
 }

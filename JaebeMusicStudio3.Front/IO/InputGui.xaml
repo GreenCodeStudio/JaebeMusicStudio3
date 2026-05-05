@@ -4,9 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:JaebeMusicStudio3.Front.IO"
+             xmlns:controls="clr-namespace:JaebeMusicStudio3.Front.Controls"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <ComboBox Name="InstrumentSelect"></ComboBox>
+        <StackPanel>
+            <ComboBox Name="InstrumentSelect"></ComboBox>
+            <controls:NoteVisualization x:Name="visualization" />
+        </StackPanel>
     </Grid>
 </UserControl>
