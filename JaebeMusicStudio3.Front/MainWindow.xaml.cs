@@ -131,6 +131,33 @@ public partial class MainWindow : Window
             }
         };
         timeline.Add(noteLine);
+        var noteLine2 = new NoteLine()
+        {
+            Instrument = instrument,
+            OffsetSeconds = 5.0,
+            Notes = new List<Note>()
+            {
+                new Note()
+                {
+                    Start = 0,
+                    Length = 0.5,
+                    Pitch = 440
+                },
+                new Note()
+                {
+                    Start = 1,
+                    Length = 0.5,
+                    Pitch = 440 * Math.Pow(2, 1.0 / 12)
+                },
+                new Note()
+                {
+                    Start = 2,
+                    Length = 0.5,
+                    Pitch = 440 * Math.Pow(2, 2.0 / 12)
+                }
+            }
+        };
+        timeline.Add(noteLine2);
 
         var process = RenderingProcess.Current;
         MainWindow.provider = new WaveProvider(mixer);

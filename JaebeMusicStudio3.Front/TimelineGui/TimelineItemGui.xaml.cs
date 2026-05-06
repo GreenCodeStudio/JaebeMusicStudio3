@@ -8,7 +8,7 @@ namespace JaebeMusicStudio3.Front.TimelineGui;
 
 public partial class TimelineItemGui : UserControl
 {
-    public TimelineItemGui(ITimelineItem item, double secondsPerPixel)
+    public TimelineItemGui(ITimelineItem item, double secondsPerPixel, double offsetRelative, double horizontalLineHeight)
     {
         InitializeComponent();
         if (item is RecordedSound itemC)
@@ -47,11 +47,11 @@ public partial class TimelineItemGui : UserControl
                     var rect = new Rectangle();
                     rect.VerticalAlignment = VerticalAlignment.Top;
                     rect.HorizontalAlignment = HorizontalAlignment.Left;
-                    rect.Margin = new Thickness(n.Start / itemN.Tempo * 60 / secondsPerPixel,
-                        (pitch - minPitch) / (maxPitch - minPitch + 1) * 50, 0, 0);
+                    rect.Margin = new Thickness((n.Start / itemN.Tempo * 60 + offsetRelative) / secondsPerPixel,
+                        (maxPitch - pitch) / (maxPitch-minPitch + 1) * horizontalLineHeight, 0, 0);
                     rect.Width = n.Length / itemN.Tempo * 60 / secondsPerPixel;
-                    rect.Height = 1 / (maxPitch - minPitch + 1) * 50;
-                    // rect.Fill = System.Windows.Media.Brushes.Green;
+                    rect.Height = 1 / (maxPitch - minPitch + 1) * horizontalLineHeight;
+                    rect.Fill = System.Windows.Media.Brushes.Green;
                     rect.Stroke = System.Windows.Media.Brushes.Black;
                     grid.Children.Add(rect);
                 }

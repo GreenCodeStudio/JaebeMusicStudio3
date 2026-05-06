@@ -14,6 +14,7 @@ public partial class TimelineGui : UserControl, ITabbableControl
 {
     private readonly Timeline timeline;
     private double SecondsPerPixel = 0.01;
+    private double HorizontalLineHeight = 100.0;
 
     public TimelineGui(Timeline timeline)
     {
@@ -23,6 +24,7 @@ public partial class TimelineGui : UserControl, ITabbableControl
         Drop += OnDrop;
         Render();
         timeline.Changed += () => { Dispatcher.Invoke(() => Render()); };
+        this.SizeChanged += (_, _) => { Dispatcher.Invoke(() => Render()); };
         MouseWheel += TimelineGui_MouseWheel;
         CompositionTarget.Rendering += (s, e) =>
         {
@@ -45,8 +47,28 @@ public partial class TimelineGui : UserControl, ITabbableControl
         if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
         {
             var multiplier = Math.Pow(1.25, e.Delta / 120.0);
-            SecondsPerPixel *= multiplier;
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            {
+                SecondsPerPixel *= multiplier;
+            }
+            else
+            {
+                HorizontalLineHeight *= multiplier;
+            }
+
             Render();
+        }
+        else
+        {
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            {
+                HorizontalScrollBar.Value -= e.Delta * SecondsPerPixel;
+                Render();
+            }
+            else
+            {
+                
+            }
         }
     }
 
@@ -55,6 +77,7 @@ public partial class TimelineGui : UserControl, ITabbableControl
         HorizontalScrollBar.Maximum = timeline.TotalLength;
         this.TimelineMarker.SecondsPerPixel = SecondsPerPixel;
         this.TimelineMarker.OffsetInSeconds = HorizontalScrollBar.Value;
+        var maxWidth = this.ActualWidth * SecondsPerPixel;
         while (Lines.Children.Count > 2)
         {
             Lines.Children.RemoveAt(1);
@@ -62,42 +85,34 @@ public partial class TimelineGui : UserControl, ITabbableControl
 
         foreach (var item in timeline.Items)
         {
-            if (item is RecordedSoundInProgress recordedSoundInProgress)
+            var line = new Grid();
+            line.Height = HorizontalLineHeight;
+            Lines.Children.Insert(Lines.Children.Count - 1, line);
+            var offsetRelative = item.OffsetSeconds - HorizontalScrollBar.Value;
+
+            var length = item.LengthSeconds;
+            var endOffset = offsetRelative + length;
+            if (offsetRelative < 0)
             {
-                var line = new Grid();
-                line.Height = 100;
-                Lines.Children.Insert(Lines.Children.Count - 1, line);
-                var control = new TimelineItemGui(recordedSoundInProgress, SecondsPerPixel);
-                control.HorizontalAlignment = HorizontalAlignment.Left;
-                control.Width = recordedSoundInProgress.LengthSeconds / SecondsPerPixel;
-                control.Margin = new Thickness(-HorizontalScrollBar.Value / SecondsPerPixel, 0, 0, 0);
-                line.Children.Add(control);
-                recordedSoundInProgress.Changed += () => Dispatcher.Invoke(Render);
+                length += offsetRelative;
             }
-            else if (item is RecordedSound recordedSound)
+
+            if (endOffset > maxWidth)
             {
-                var line = new Grid();
-                line.Height = 100;
-                Lines.Children.Insert(Lines.Children.Count - 1, line);
-                var control = new TimelineItemGui(recordedSound, SecondsPerPixel);
-                control.HorizontalAlignment = HorizontalAlignment.Left;
-                control.Width = recordedSound.LengthSeconds / SecondsPerPixel;
-                control.Margin = new Thickness(-HorizontalScrollBar.Value / SecondsPerPixel, 0, 0, 0);
-                line.Children.Add(control);
-                recordedSound.Changed += () => Dispatcher.Invoke(Render);
+                length -= endOffset - maxWidth;
             }
-            else if (item is NoteLine noteLine)
-            {
-                var line = new Grid();
-                line.Height = 100;
-                Lines.Children.Insert(Lines.Children.Count - 1, line);
-                var control = new TimelineItemGui(noteLine, SecondsPerPixel);
-                control.HorizontalAlignment = HorizontalAlignment.Left;
-                control.Width = noteLine.Notes.Max(x => x.Start + x.Length) * 60 / noteLine.Tempo / SecondsPerPixel;
-                control.Margin = new Thickness(-HorizontalScrollBar.Value / SecondsPerPixel, 0, 0, 0);
-                line.Children.Add(control);
-                noteLine.Changed += () => Dispatcher.Invoke(Render);
-            }
+
+            if (length <= 0)
+                continue;
+            var control = new TimelineItemGui(item, SecondsPerPixel, offsetRelative > 0 ? 0 : offsetRelative,
+                HorizontalLineHeight);
+            if (offsetRelative > 0)
+                control.Margin = new Thickness(offsetRelative / SecondsPerPixel, 0, 0, 0);
+
+            control.HorizontalAlignment = HorizontalAlignment.Left;
+            control.Width = length / SecondsPerPixel;
+            line.Children.Add(control);
+            item.Changed += () => Dispatcher.Invoke(Render);
         }
     }
 
@@ -144,6 +159,18 @@ public partial class TimelineGui : UserControl, ITabbableControl
     private void ZoomIn(object sender, RoutedEventArgs e)
     {
         SecondsPerPixel /= 1.25;
+        Render();
+    }
+
+    private void ZoomHOut(object sender, RoutedEventArgs e)
+    {
+        HorizontalLineHeight /= 1.25;
+        Render();
+    }
+
+    private void ZoomHIn(object sender, RoutedEventArgs e)
+    {
+        HorizontalLineHeight *= 1.25;
         Render();
     }
 

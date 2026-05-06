@@ -6,13 +6,15 @@
              xmlns:local="clr-namespace:JaebeMusicStudio3.Front.TimelineGui"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
+    <Grid Background="White">
         <StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button Click="LoadFileClick">Load file</Button>
                 <Button Click="AudioRecorderClick">Audio recorder</Button>
                 <Button Click="ZoomOut">Zoom -</Button>
                 <Button Click="ZoomIn">Zoom +</Button>
+                <Button Click="ZoomHOut">Zoom H -</Button>
+                <Button Click="ZoomHIn">Zoom H +</Button>
                 <Button Click="Play">Play</Button>
                 <Button Click="Stop">Stop</Button>
             </StackPanel>
