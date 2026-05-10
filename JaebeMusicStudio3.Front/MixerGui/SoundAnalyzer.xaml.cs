@@ -6,6 +6,7 @@ using System.Windows.Shapes;
 using JaebeMusicStudio3.Core.AudioNodes;
 using JaebeMusicStudio3.Core.AudioRendering;
 using JaebeMusicStudio3.Core.Utils;
+using JaebeMusicStudio3.Front.Utils;
 using Optimalization.Fourier;
 
 namespace JaebeMusicStudio3.Front.MixerGui;

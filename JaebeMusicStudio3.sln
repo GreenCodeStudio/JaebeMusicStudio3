@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JaebeMusicStudio3.Core", "J
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VstHost", "VstHost\VstHost.csproj", "{48905DA7-3786-477A-8823-4961182C751B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JaebeMusicStudio3.VstHost", "JaebeMusicStudio3.VstHost\JaebeMusicStudio3.VstHost.csproj", "{2F624BF1-0804-452B-9019-81F10CC272CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,9 +22,13 @@ Global
 		{5792DF2A-0D78-4303-B770-C2232521C70C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5792DF2A-0D78-4303-B770-C2232521C70C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5792DF2A-0D78-4303-B770-C2232521C70C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48905DA7-3786-477A-8823-4961182C751B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48905DA7-3786-477A-8823-4961182C751B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48905DA7-3786-477A-8823-4961182C751B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48905DA7-3786-477A-8823-4961182C751B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48905DA7-3786-477A-8823-4961182C751B}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{48905DA7-3786-477A-8823-4961182C751B}.Debug|Any CPU.Build.0 = Debug|x86
+		{2F624BF1-0804-452B-9019-81F10CC272CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F624BF1-0804-452B-9019-81F10CC272CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F624BF1-0804-452B-9019-81F10CC272CF}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{2F624BF1-0804-452B-9019-81F10CC272CF}.Debug|Any CPU.Build.0 = Debug|x64
 	EndGlobalSection
 EndGlobal

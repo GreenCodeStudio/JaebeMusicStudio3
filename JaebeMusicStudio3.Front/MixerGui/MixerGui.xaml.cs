@@ -11,7 +11,9 @@ public partial class MixerGui : UserControl
     public MixerGui(AudioMixer mixer)
     {
         this.Mixer = mixer;
-        InitializeComponent();
+        InitializeComponent();      
+        this.AllowDrop = true;
+        Drop += OnDrop;
         Render();
         mixer.Changed += () => { Dispatcher.Invoke(() => Render()); };
         var contextMenu = new ContextMenu();
@@ -134,6 +136,15 @@ public partial class MixerGui : UserControl
             line.X2 = lineEndNode.Margin.Left + lineEndNode.Width;
             line.Y2 = lineEndNode.Margin.Top + 40 + 30 * endIndex;
             Plane.Children.Add(line);
+        }
+    }   
+    private void OnDrop(object sender, DragEventArgs e)
+    {
+        var fileNames = e.Data.GetData("FileDrop");
+
+        foreach (var x in fileNames as string[])
+        {
+            Mixer.LoadVstFile(x);
         }
     }
 }

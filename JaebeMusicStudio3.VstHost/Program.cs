@@ -1,0 +1,20 @@
+using Jacobi.Vst.Host.Interop;
+
+namespace JaebeMusicStudio3.VstHost;
+
+static class Program
+{
+    [STAThread]
+    static void Main()
+    {
+        Console.WriteLine("Hello, World!");
+
+        var hostCmdStub = new HostCommandStub();
+        var ctx = VstPluginContext.Create("C:\\Program Files (x86)\\Common Files\\Steinberg\\VST2\\Voxengo\\Marvel GEQ.dll", hostCmdStub);
+
+        ctx.PropertyChanged += (s, e) =>
+        {
+            Console.WriteLine("Property changed: " + e.PropertyName);
+        };
+    }
+}

@@ -2,17 +2,23 @@
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using JaebeMusicStudio3.Core.Timeline;
+using JaebeMusicStudio3.Front.Utils;
 
 
 namespace JaebeMusicStudio3.Front.TimelineGui;
 
 public partial class TimelineItemGui : UserControl
 {
-    public TimelineItemGui(ITimelineItem item, double secondsPerPixel, double offsetRelative, double horizontalLineHeight)
+    public TimelineItemGui(ITimelineItem item, double secondsPerPixel, double offsetRelative,
+        double horizontalLineHeight, double visibleLength)
     {
         InitializeComponent();
         if (item is RecordedSound itemC)
         {
+            var line = GraphDrawer.GenerateSamplesGraph(itemC.WaveFormat.SampleRate,
+                itemC.Samples.Skip((int)(-offsetRelative * itemC.WaveFormat.SampleRate))
+                    .Take((int)(visibleLength * itemC.WaveFormat.SampleRate)), secondsPerPixel, horizontalLineHeight);
+            MainGrid.Children.Add(line);
             //     var line = new Polyline();
             //     line.Stroke = System.Windows.Media.Brushes.Green;
             //     MainGrid.Children.Add(line);
@@ -35,6 +41,14 @@ public partial class TimelineItemGui : UserControl
         }
         else if (item is NoteLine itemN)
         {
+            this.MouseDoubleClick += (_, _) =>
+            {
+                UiWindow.Open(() =>
+                    new TabView(
+                        () => new NoteLineEditor.NoteLineEditor(itemN)
+                    )
+                );
+            };
             if (itemN.Notes.Any())
             {
                 var grid = new Grid();
@@ -48,7 +62,7 @@ public partial class TimelineItemGui : UserControl
                     rect.VerticalAlignment = VerticalAlignment.Top;
                     rect.HorizontalAlignment = HorizontalAlignment.Left;
                     rect.Margin = new Thickness((n.Start / itemN.Tempo * 60 + offsetRelative) / secondsPerPixel,
-                        (maxPitch - pitch) / (maxPitch-minPitch + 1) * horizontalLineHeight, 0, 0);
+                        (maxPitch - pitch) / (maxPitch - minPitch + 1) * horizontalLineHeight, 0, 0);
                     rect.Width = n.Length / itemN.Tempo * 60 / secondsPerPixel;
                     rect.Height = 1 / (maxPitch - minPitch + 1) * horizontalLineHeight;
                     rect.Fill = System.Windows.Media.Brushes.Green;

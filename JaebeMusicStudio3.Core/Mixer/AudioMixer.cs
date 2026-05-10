@@ -114,4 +114,9 @@ public class AudioMixer
         }
         Changed?.Invoke();
     }
+
+    public void LoadVstFile(string filePath)
+    {
+        
+    }
 }

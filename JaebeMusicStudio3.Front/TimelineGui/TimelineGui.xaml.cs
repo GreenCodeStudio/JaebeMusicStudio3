@@ -87,6 +87,7 @@ public partial class TimelineGui : UserControl, ITabbableControl
         {
             var line = new Grid();
             line.Height = HorizontalLineHeight;
+            line.HorizontalAlignment = HorizontalAlignment.Left;
             Lines.Children.Insert(Lines.Children.Count - 1, line);
             var offsetRelative = item.OffsetSeconds - HorizontalScrollBar.Value;
 
@@ -105,7 +106,7 @@ public partial class TimelineGui : UserControl, ITabbableControl
             if (length <= 0)
                 continue;
             var control = new TimelineItemGui(item, SecondsPerPixel, offsetRelative > 0 ? 0 : offsetRelative,
-                HorizontalLineHeight);
+                HorizontalLineHeight, length);
             if (offsetRelative > 0)
                 control.Margin = new Thickness(offsetRelative / SecondsPerPixel, 0, 0, 0);
 
