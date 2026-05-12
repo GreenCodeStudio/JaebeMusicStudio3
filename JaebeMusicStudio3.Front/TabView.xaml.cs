@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
+using JaebeMusicStudio3.Core.Serialization;
+using Microsoft.Win32;
 
 namespace JaebeMusicStudio3.Front;
 
@@ -101,4 +103,25 @@ title.Margin = new Thickness(4, 0, 4, 4);
 
     public string Title => (_selectedContent as ITabbableControl)?.Title ?? _selectedContent?.ToString() ?? "Empty";
     public event Action? ChangedMetadata;
+
+    private void ShowMenu(object sender, RoutedEventArgs e)
+    {
+        var contextMenu = new ContextMenu();
+        var save = new MenuItem();
+        save.Header = "Save";
+        save.Click += (x, y) =>
+        {
+            var dialog=new SaveFileDialog()            {
+                Filter = "Jaebe Music Studio Project|*.jmsp",
+                DefaultExt = "jmsp"
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                var path = dialog.FileName;
+                Project.ReadLoaded().SaveAsFile(path);
+            }
+        };
+        contextMenu.Items.Add(save);
+        contextMenu.IsOpen = true;
+    }
 }

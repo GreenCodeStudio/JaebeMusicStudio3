@@ -12,9 +12,14 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Rectangle Grid.Row="1" Fill="#fff"  Margin="0"></Rectangle>
-            <Grid Name="ContentWrapper" Row="1" Margin="4,4,4,4"></Grid>
-            <ScrollViewer Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Rectangle Grid.Row="1" Grid.ColumnSpan="2" Fill="#fff"  Margin="0"></Rectangle>
+            <Grid Name="ContentWrapper" Grid.ColumnSpan="2" Row="1" Margin="4,4,4,4"></Grid>
+            <Button Click="ShowMenu">Menu</Button>
+            <ScrollViewer Grid.Row="0" Grid.Column="1">
                 <Grid>
                     <StackPanel Name="TabsWrapper" Orientation="Horizontal"></StackPanel>
                 </Grid>

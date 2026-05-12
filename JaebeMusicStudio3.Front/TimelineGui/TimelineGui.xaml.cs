@@ -14,7 +14,9 @@ public partial class TimelineGui : UserControl, ITabbableControl
 {
     private readonly Timeline timeline;
     private double SecondsPerPixel = 0.01;
-    private double HorizontalLineHeight = 100.0;
+    private double HorizontalLineHeight = 100.0; 
+    private ITimelineItem _movingNode = null;
+    private Point? _movingPoint = null;
 
     public TimelineGui(Timeline timeline)
     {
@@ -39,6 +41,23 @@ public partial class TimelineGui : UserControl, ITabbableControl
             {
                 NowMarker.Margin = new Thickness(0, 0, 0, 0);
             }
+        };
+        
+        this.MouseMove += (sender, args) =>
+        {
+            if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed && _movingNode != null)
+            {
+                var deltaX = args.MouseDevice.GetPosition(this).X - _movingPoint.Value.X;
+                var deltaY = args.MouseDevice.GetPosition(this).Y - _movingPoint.Value.Y;
+                _movingNode.OffsetSeconds += deltaX * SecondsPerPixel;
+                _movingPoint = args.MouseDevice.GetPosition(this);
+                
+            }
+        };
+        this.MouseUp += (sender, args) =>
+        {
+            _movingNode = null;
+            _movingPoint = null;
         };
     }
 
@@ -113,8 +132,19 @@ public partial class TimelineGui : UserControl, ITabbableControl
             control.HorizontalAlignment = HorizontalAlignment.Left;
             control.Width = length / SecondsPerPixel;
             line.Children.Add(control);
-            item.Changed += () => Dispatcher.Invoke(Render);
+            control.MouseDown += (sender, args) =>
+            {
+                _movingNode = item;
+                _movingPoint = args.MouseDevice.GetPosition(this);
+            };
+            item.Changed -= OnItemChanged;
+            item.Changed += OnItemChanged;
         }
+    }
+
+    private void OnItemChanged()
+    {
+        Dispatcher.Invoke(Render);
     }
 
     private void OnDrop(object sender, DragEventArgs e)

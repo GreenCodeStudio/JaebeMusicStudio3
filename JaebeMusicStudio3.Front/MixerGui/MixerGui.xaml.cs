@@ -141,10 +141,12 @@ public partial class MixerGui : UserControl
     private void OnDrop(object sender, DragEventArgs e)
     {
         var fileNames = e.Data.GetData("FileDrop");
-
-        foreach (var x in fileNames as string[])
+        if (fileNames != null)
         {
-            Mixer.LoadVstFile(x);
+            foreach (var x in fileNames as string[])
+            {
+                Mixer.LoadVstFile(x);
+            }
         }
     }
 }
