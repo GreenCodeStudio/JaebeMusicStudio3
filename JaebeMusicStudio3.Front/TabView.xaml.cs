@@ -122,6 +122,22 @@ title.Margin = new Thickness(4, 0, 4, 4);
             }
         };
         contextMenu.Items.Add(save);
+        var open = new MenuItem();
+        open.Header = "Open";
+        open.Click += (x, y) =>
+        {
+            var dialog = new OpenFileDialog()
+            {
+                Filter = "Jaebe Music Studio Project|*.jmsp",
+                DefaultExt = "jmsp"
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                var path = dialog.FileName;
+                Project.ReadFromFile(path).Load();
+            }
+        };
+        contextMenu.Items.Add(open);
         contextMenu.IsOpen = true;
     }
 }

@@ -1,4 +1,5 @@
-﻿using JaebeMusicStudio3.Core.Mixer;
+﻿using System.Text.Json.Serialization;
+using JaebeMusicStudio3.Core.Mixer;
 using JaebeMusicStudio3.Core.Utils;
 using NAudio.Wave;
 
@@ -7,7 +8,10 @@ namespace JaebeMusicStudio3.Core.Timeline;
 public class Timeline
 {
     public static Timeline Current = new Timeline();
+    [JsonPropertyName("Items")]
+    [JsonInclude]
     private List<ITimelineItem> _items = new List<ITimelineItem>();
+    [JsonIgnore]
     public IReadOnlyList<ITimelineItem> Items => _items.ToList();
     public double TotalLength => 60; //tmp
 

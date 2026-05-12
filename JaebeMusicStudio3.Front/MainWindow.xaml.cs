@@ -13,6 +13,7 @@ using JaebeMusicStudio3.Core.AudioNodes;
 using JaebeMusicStudio3.Core.AudioRendering;
 using JaebeMusicStudio3.Core.IO;
 using JaebeMusicStudio3.Core.Mixer;
+using JaebeMusicStudio3.Core.Serialization;
 using JaebeMusicStudio3.Core.Timeline;
 using JaebeMusicStudio3.Front.IO;
 using NAudio.CoreAudioApi;
@@ -172,5 +173,15 @@ public partial class MainWindow : Window
                 () => new IOGui()
             )
         );
+        Project.Loaded += () =>
+        {
+            UiWindow.Open(() =>
+                new TabView(
+                    () => new MixerGui.MixerGui(mixer),
+                    () => new TimelineGui.TimelineGui(Timeline.Current),
+                    () => new IOGui()
+                )
+            );
+        };
     }
 }
