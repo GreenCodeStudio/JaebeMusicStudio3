@@ -13,6 +13,8 @@ public partial class NoteLineEditor : UserControl
     private double PitchNoteHeight = 50;
     private double BeatsPerPixel = 0.01;
     private readonly NoteLine item;
+    private Note _movingNode = null;
+    private Point? _movingPoint = null;
 
     public NoteLineEditor(NoteLine itemN)
     {
@@ -20,6 +22,29 @@ public partial class NoteLineEditor : UserControl
         InitializeComponent();
         SizeChanged += (_, _) => Render();
         MouseWheel += OnMouseWheel;
+
+        this.MouseMove += (sender, args) =>
+        {
+            if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed && _movingNode != null)
+            {
+                var cNoteLog = Math.Log2(440.0) * 12;
+                var deltaX = args.MouseDevice.GetPosition(this).X - _movingPoint.Value.X;
+                var deltaY = args.MouseDevice.GetPosition(this).Y - _movingPoint.Value.Y;
+                _movingNode.Start += deltaX * BeatsPerPixel;
+                var pitchLog = Math.Log2(_movingNode.Pitch) * 12 - cNoteLog;
+                var newPitchLog = Math.Round(pitchLog - deltaY / PitchNoteHeight);
+                _movingNode.Pitch = Math.Pow(2, (newPitchLog + cNoteLog) / 12);
+                _movingPoint = new Point(_movingPoint.Value.X + deltaX,
+                    _movingPoint.Value.Y + (pitchLog - newPitchLog) * PitchNoteHeight);
+                RenderPlane();
+                item.InvokeChanged();
+            }
+        };
+        this.MouseUp += (sender, args) =>
+        {
+            _movingNode = null;
+            _movingPoint = null;
+        };
     }
 
     private void OnMouseWheel(object sender, MouseWheelEventArgs e)
@@ -78,7 +103,7 @@ public partial class NoteLineEditor : UserControl
             label.Height = PitchNoteHeight;
             Pitches.Children.Add(label);
             label.VerticalAlignment = VerticalAlignment.Top;
-            label.Margin = new Thickness(0, (startLogPitch-i) * PitchNoteHeight, 0, 0);
+            label.Margin = new Thickness(0, (startLogPitch - i) * PitchNoteHeight, 0, 0);
         }
     }
 
@@ -92,12 +117,17 @@ public partial class NoteLineEditor : UserControl
             rect.VerticalAlignment = VerticalAlignment.Top;
             rect.HorizontalAlignment = HorizontalAlignment.Left;
             rect.Margin = new Thickness((n.Start) / BeatsPerPixel,
-                (PitchLog - pitch)* PitchNoteHeight, 0, 0);
+                (PitchLog - pitch) * PitchNoteHeight, 0, 0);
             rect.Width = n.Length / BeatsPerPixel;
             rect.Height = PitchNoteHeight;
             rect.Fill = System.Windows.Media.Brushes.Green;
             rect.Stroke = System.Windows.Media.Brushes.Black;
             Plane.Children.Add(rect);
+            rect.MouseDown += (sender, args) =>
+            {
+                _movingNode = n;
+                _movingPoint = args.MouseDevice.GetPosition(this);
+            };
         }
     }
 }
