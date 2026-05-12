@@ -15,6 +15,7 @@ public partial class NoteLineEditor : UserControl
     private readonly NoteLine item;
     private Note _movingNode = null;
     private Point? _movingPoint = null;
+    private bool _movingEnd = false;
 
     public NoteLineEditor(NoteLine itemN)
     {
@@ -30,10 +31,22 @@ public partial class NoteLineEditor : UserControl
                 var cNoteLog = Math.Log2(440.0) * 12;
                 var deltaX = args.MouseDevice.GetPosition(this).X - _movingPoint.Value.X;
                 var deltaY = args.MouseDevice.GetPosition(this).Y - _movingPoint.Value.Y;
-                _movingNode.Start += deltaX * BeatsPerPixel;
                 var pitchLog = Math.Log2(_movingNode.Pitch) * 12 - cNoteLog;
                 var newPitchLog = Math.Round(pitchLog - deltaY / PitchNoteHeight);
-                _movingNode.Pitch = Math.Pow(2, (newPitchLog + cNoteLog) / 12);
+                if (_movingEnd)
+                {
+                    _movingNode.Length += deltaX * BeatsPerPixel;
+                    if (_movingNode.Length < 0)
+                    {
+                        _movingNode.Length = 0;
+                    }
+                }
+                else
+                {
+                    _movingNode.Start += deltaX * BeatsPerPixel;
+                    _movingNode.Pitch = Math.Pow(2, (newPitchLog + cNoteLog) / 12);
+                }
+
                 _movingPoint = new Point(_movingPoint.Value.X + deltaX,
                     _movingPoint.Value.Y + (pitchLog - newPitchLog) * PitchNoteHeight);
                 RenderPlane();
@@ -44,6 +57,24 @@ public partial class NoteLineEditor : UserControl
         {
             _movingNode = null;
             _movingPoint = null;
+        };
+        Plane.MouseDown += (sender, args) =>
+        {
+            if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed &&
+                (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt)))
+            {
+                var cNoteLog = Math.Log2(440.0) * 12;
+                var pitchLog = PitchLog - args.MouseDevice.GetPosition(Plane).Y / PitchNoteHeight;
+                var newNote = new Note
+                {
+                    Start = args.MouseDevice.GetPosition(Plane).X * BeatsPerPixel,
+                    Length = 1,
+                    Pitch = Math.Pow(2, (Math.Round(pitchLog - cNoteLog) + cNoteLog) / 12)
+                };
+                item.Notes.Add(newNote);
+                RenderPlane();
+                item.InvokeChanged();
+            }
         };
     }
 
@@ -127,6 +158,22 @@ public partial class NoteLineEditor : UserControl
             {
                 _movingNode = n;
                 _movingPoint = args.MouseDevice.GetPosition(this);
+                _movingEnd = false;
+            };
+            var afterRect = new Rectangle();
+            afterRect.VerticalAlignment = VerticalAlignment.Top;
+            afterRect.HorizontalAlignment = HorizontalAlignment.Left;
+            afterRect.Margin = new Thickness((n.Start + n.Length) / BeatsPerPixel,
+                (PitchLog - pitch) * PitchNoteHeight, 0, 0);
+            afterRect.Width = 20;
+            afterRect.Height = PitchNoteHeight;
+            afterRect.Fill = new SolidColorBrush(Color.FromArgb(128, 0, 255, 0));
+            Plane.Children.Add(afterRect);
+            afterRect.MouseDown += (sender, args) =>
+            {
+                _movingNode = n;
+                _movingPoint = args.MouseDevice.GetPosition(this);
+                _movingEnd = true;
             };
         }
     }

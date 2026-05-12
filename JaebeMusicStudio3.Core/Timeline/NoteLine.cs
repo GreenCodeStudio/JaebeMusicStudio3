@@ -10,7 +10,7 @@ public class NoteLine : ITimelineItem
     public List<Note> Notes { get; set; } = new List<Note>();
     [JsonIgnore]
     public Instrument Instrument { get; set; }
-    public double LengthSeconds => (Notes.Count > 0 ? Notes.Max(n => n.Start + n.Length) : 0)/60*Tempo;
+    public double LengthSeconds => (Notes.Count > 0 ? Notes.Max(n => n.Start + n.Length) : 0)*60/Tempo;
 
     public double OffsetSeconds
     {
