@@ -1,10 +1,13 @@
 ﻿using System.Numerics;
+using System.Text.Json.Serialization;
 using JaebeMusicStudio3.Core.AudioRendering;
 
 namespace JaebeMusicStudio3.Core.AudioNodes;
 
-public class Overdrive : IAudioNode
+public class OverdriveNode : IAudioNode
 {
+    public Guid Id { get; }=Guid.NewGuid();
+    [JsonIgnore]
     public IEnumerable<NodeInputDefinition> Inputs => new List<NodeInputDefinition>()
     {
         new NodeInputDefinition()
@@ -15,6 +18,7 @@ public class Overdrive : IAudioNode
         }
     };
 
+    [JsonIgnore]
     public IEnumerable<NodeOutputDefinition> Outputs => new List<NodeOutputDefinition>()
     {
         new NodeOutputDefinition()

@@ -1,18 +1,20 @@
-﻿using JaebeMusicStudio3.Core.AudioNodes;
+﻿using System.Text.Json.Serialization;
+using JaebeMusicStudio3.Core.AudioNodes;
 using JaebeMusicStudio3.Core.AudioRendering;
 
 namespace JaebeMusicStudio3.Core.Mixer;
 
-public class AudioMixer
+public class AudioMixer:IJsonOnDeserialized
 {
     public static AudioMixer Current = new AudioMixer();
     private List<IAudioNode> _nodes = new List<IAudioNode>();
     public NodeOutputDefinition MainOutput { get; set; }
 
+
     private Dictionary<NodeInputDefinition, NodeOutputDefinition> _connections =
         new Dictionary<NodeInputDefinition, NodeOutputDefinition>();
 
-    private Dictionary<IAudioNode, VisualPosition> _positions = new Dictionary<IAudioNode, VisualPosition>();
+    private Dictionary<Guid, VisualPosition> _positions = new Dictionary<Guid, VisualPosition>();
     public event Action Changed;
     public void Add(IAudioNode node)
     {
@@ -71,7 +73,7 @@ public class AudioMixer
             }
         }
     }
-
+[JsonIgnore]
     public KeyValuePair<NodeInputDefinition, NodeOutputDefinition>[] Connections
     {
         get
@@ -87,12 +89,12 @@ public class AudioMixer
     {
         lock (this)
         {
-            if (_positions.ContainsKey(node))
-                return _positions[node];
+            if (_positions.ContainsKey(node.Id))
+                return _positions[node.Id];
             else
             {
                 var pos = new VisualPosition();
-                _positions[node] = pos;
+                _positions[node.Id] = pos;
                 return pos;
             }
         }
@@ -101,7 +103,7 @@ public class AudioMixer
     {
         lock (this)
         {
-            _positions[node] = position;
+            _positions[node.Id] = position;
         }
         Changed?.Invoke();
     }
@@ -118,5 +120,49 @@ public class AudioMixer
     public void LoadVstFile(string filePath)
     {
         
+    }
+    [JsonPropertyName("Connections")]
+    [JsonInclude]
+    public IEnumerable<KeyValuePair<NodeInputDefinition, NodeOutputDefinition>> SerializableConnections
+    {
+        get
+        {
+            lock (this)
+            {
+                return _connections.ToArray();
+            }
+        }
+        set
+        {
+            lock (this)
+            {
+                _connections = value.ToDictionary(kv => kv.Key, kv => kv.Value);
+            }
+        }
+    }
+
+    [JsonPropertyName("Positions")]
+    [JsonInclude]
+    public IEnumerable<KeyValuePair<Guid, VisualPosition>> SerializablePositions
+    {
+        get
+        {
+            lock (this)
+            {
+                return _positions.ToDictionary(kv => kv.Key, kv => kv.Value).ToArray();
+            }
+        }
+        set
+        {
+            lock (this)
+            {
+                _positions = value.ToDictionary(kv => kv.Key, kv => kv.Value);
+            }
+        }
+    }
+
+    public void OnDeserialized()
+    {
+        _connections=_connections.ToDictionary(kv => kv.Key, kv => kv.Value);
     }
 }

@@ -1,11 +1,15 @@
-﻿using JaebeMusicStudio3.Core.AudioRendering;
+﻿using System.Text.Json.Serialization;
+using JaebeMusicStudio3.Core.AudioRendering;
 
 namespace JaebeMusicStudio3.Core.AudioNodes;
 
 public class DummyNoise : IAudioNode
 {
+    public Guid Id { get; }=Guid.NewGuid();
+    [JsonIgnore]
     public IEnumerable<NodeInputDefinition> Inputs => new List<NodeInputDefinition>();
 
+    [JsonIgnore]
     public IEnumerable<NodeOutputDefinition> Outputs => new List<NodeOutputDefinition>()
     {
         new NodeOutputDefinition()

@@ -43,7 +43,7 @@ public partial class MixerGui : UserControl
         overdrive.Header = "Overdrive";
         overdrive.Click += (s, e) =>
         {
-            var node = new Overdrive();
+            var node = new OverdriveNode();
             Mixer.Add(node);
         };
         add.Items.Add(overdrive);

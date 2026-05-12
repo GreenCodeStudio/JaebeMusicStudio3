@@ -7,6 +7,7 @@ namespace JaebeMusicStudio3.Core.Timeline;
 
 public class RecordedSound : ITimelineItem, IAudioNode
 {
+    public Guid Id { get; }=Guid.NewGuid();
     public WaveFormat WaveFormat { get; set; }
 
     public float[] Samples

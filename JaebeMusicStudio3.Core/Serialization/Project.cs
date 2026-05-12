@@ -8,6 +8,11 @@ public class Project
 {
     public void SaveAsFile(string path)
     {
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
+
         using (var zip = ZipFile.Open(path, ZipArchiveMode.Create))
         {
             var entry = zip.CreateEntry("project.json");
@@ -22,7 +27,7 @@ public class Project
     {
         var ret = new Project()
         {
-            // Mixer = JaebeMusicStudio3.Core.Mixer.AudioMixer.Current,
+            Mixer = JaebeMusicStudio3.Core.Mixer.AudioMixer.Current,
             Timeline = JaebeMusicStudio3.Core.Timeline.Timeline.Current
         };
         return ret;
@@ -36,7 +41,6 @@ public class Project
             var entry = zip.GetEntry("project.json");
             using (var stream = entry.Open())
             {
-                var a = JsonSerializer.Deserialize<object>(stream);
                 ret = JsonSerializer.Deserialize<Project>(stream);
             }
         }
@@ -47,11 +51,12 @@ public class Project
     public void Load()
     {
         JaebeMusicStudio3.Core.Timeline.Timeline.Current = this.Timeline;
+        AudioMixer.Current = this.Mixer;
         Loaded?.Invoke();
     }
 
     public Timeline.Timeline Timeline { get; set; }
 
-    // public AudioMixer Mixer { get; set; }
+    public AudioMixer Mixer { get; set; }
     public static event Action? Loaded;
 }

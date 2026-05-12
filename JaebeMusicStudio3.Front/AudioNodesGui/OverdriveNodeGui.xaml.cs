@@ -5,7 +5,7 @@ namespace JaebeMusicStudio3.Front.AudioNodesGui;
 
 public partial class OverdriveNodeGui : UserControl
 {
-    public OverdriveNodeGui(Overdrive overdriveNode)
+    public OverdriveNodeGui(OverdriveNode overdriveNode)
     {
         InitializeComponent();
         this.VolumeValueSlider.Value = overdriveNode.Volume;

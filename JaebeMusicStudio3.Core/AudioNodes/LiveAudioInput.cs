@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using System.Text.Json.Serialization;
 using JaebeMusicStudio3.Core.AudioRendering;
 using JaebeMusicStudio3.Core.Utils;
 using NAudio.CoreAudioApi;
@@ -8,10 +9,16 @@ namespace JaebeMusicStudio3.Core.AudioNodes;
 
 public class LiveAudioInput : IAudioNode
 {
+    
+    public Guid Id { get; }=Guid.NewGuid();
     private List<float[]> buffers = new();
     private int bufferPosition = 0;
     private WasapiCapture _capture;
+    
+    [JsonIgnore]
     public IEnumerable<NodeInputDefinition> Inputs => new List<NodeInputDefinition>();
+    
+    [JsonIgnore]
 
     public IEnumerable<NodeOutputDefinition> Outputs => new List<NodeOutputDefinition>()
     {
