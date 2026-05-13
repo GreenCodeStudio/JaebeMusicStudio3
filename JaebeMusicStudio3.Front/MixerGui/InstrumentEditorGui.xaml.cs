@@ -6,16 +6,14 @@ using JaebeMusicStudio3.Core.Mixer;
 
 namespace JaebeMusicStudio3.Front.MixerGui;
 
-public partial class MixerGui : UserControl
+public partial class InstrumentEditorGui : UserControl
 {
-    public MixerGui(AudioMixer mixer)
+    public InstrumentEditorGui(Instrument instrument)
     {
-        this.Mixer = mixer;
+        this.Instrument = instrument;
         InitializeComponent();      
-        this.AllowDrop = true;
-        Drop += OnDrop;
         Render();
-        mixer.Changed += () => { Dispatcher.Invoke(() => Render()); };
+        instrument.Changed += () => { Dispatcher.Invoke(() => Render()); };
         var contextMenu = new ContextMenu();
         this.ContextMenu = contextMenu;
         var add = new MenuItem();
@@ -27,24 +25,24 @@ public partial class MixerGui : UserControl
         mix.Click += (s, e) =>
         {
             var node = new MixNode();
-            Mixer.Add(node);
+            Instrument.Add(node);
         };
         add.Items.Add(mix);
 
-        var liveAudioInput = new MenuItem();
-        liveAudioInput.Header = "LiveAudioInput";
-        liveAudioInput.Click += (s, e) =>
+        var basicOscilator = new MenuItem();
+        basicOscilator.Header = "Basic oscilator";
+        basicOscilator.Click += (s, e) =>
         {
-            var node = new LiveAudioInput();
-            Mixer.Add(node);
+            var node = new BasicOscillatorNode();
+            Instrument.Add(node);
         };
-        add.Items.Add(liveAudioInput);
+        add.Items.Add(basicOscilator);
         var overdrive = new MenuItem();
         overdrive.Header = "Overdrive";
         overdrive.Click += (s, e) =>
         {
             var node = new OverdriveNode();
-            Mixer.Add(node);
+            Instrument.Add(node);
         };
         add.Items.Add(overdrive);
 
@@ -52,11 +50,11 @@ public partial class MixerGui : UserControl
         {
             if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed && _movingNode != null)
             {
-                var pos = Mixer.GetPosition(_movingNode);
+                var pos = Instrument.GetPosition(_movingNode);
                 pos.X += args.MouseDevice.GetPosition(Plane).X - _movingPoint.Value.X;
                 pos.Y += args.MouseDevice.GetPosition(Plane).Y - _movingPoint.Value.Y;
                 _movingPoint = args.MouseDevice.GetPosition(Plane);
-                Mixer.SetPosition(_movingNode, pos);
+                Instrument.SetPosition(_movingNode, pos);
             }
         };
         this.MouseUp += (sender, args) =>
@@ -66,7 +64,7 @@ public partial class MixerGui : UserControl
         };
     }
 
-    public AudioMixer Mixer { get; set; }
+    public Instrument Instrument { get; set; }
     private IAudioNode _movingNode = null;
     private Point? _movingPoint = null;
     private IAudioNode _selectedNode;
@@ -76,13 +74,13 @@ public partial class MixerGui : UserControl
         Plane.Children.Clear();
         var map = new Dictionary<IAudioNode, UserControl>();
         var y = 10;
-        foreach (var node in Mixer.Nodes)
+        foreach (var node in Instrument.Nodes)
         {
             var nodeGui = new MixerNodeGui(node);
             nodeGui.Width = 200;
             nodeGui.Height = 100;
 
-            var pos = Mixer.GetPosition(node);
+            var pos = Instrument.GetPosition(node);
             nodeGui.Margin = new System.Windows.Thickness(pos.X, pos.Y, 0, 0);
             if (node == _selectedNode)
             {
@@ -118,24 +116,24 @@ public partial class MixerGui : UserControl
             };
 
             // nodeGui.MouseUp += (sender, args) => { ReleaseMouseCapture(); };
-            nodeGui.Connect += (input, output) => { Mixer.Connect(output, input); };
+            nodeGui.Connect += (input, output) => { Instrument.Connect(output, input); };
             nodeGui.DisconnectByOutput += (output) =>
             {
-                foreach (var keyValuePair in Mixer.Connections.Where(x => x.Value == output))
+                foreach (var keyValuePair in Instrument.Connections.Where(x => x.Value == output))
                 {
-                    Mixer.Disconnect(keyValuePair);
+                    Instrument.Disconnect(keyValuePair);
                 }
             };
             nodeGui.DisconnectByInput += (input) =>
             {
-                foreach (var keyValuePair in Mixer.Connections.Where(x => x.Key == input))
+                foreach (var keyValuePair in Instrument.Connections.Where(x => x.Key == input))
                 {
-                    Mixer.Disconnect(keyValuePair);
+                    Instrument.Disconnect(keyValuePair);
                 }
             };
         }
 
-        foreach (var x in Mixer.Connections)
+        foreach (var x in Instrument.Connections)
         {
             var lineStartNode = map[x.Key.Node];
             var lineEndNode = map[x.Value.Node];
@@ -150,15 +148,4 @@ public partial class MixerGui : UserControl
             Plane.Children.Add(line);
         }
     }   
-    private void OnDrop(object sender, DragEventArgs e)
-    {
-        var fileNames = e.Data.GetData("FileDrop");
-        if (fileNames != null)
-        {
-            foreach (var x in fileNames as string[])
-            {
-                Mixer.LoadVstFile(x);
-            }
-        }
-    }
 }

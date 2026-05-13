@@ -103,13 +103,60 @@ public partial class MainWindow : Window
         // mixer.Connect(dummy.Outputs.First(), volume.Inputs.First());
         // mixer.Connect(input.Outputs.First(), volume.Inputs.First());
         mixer.MainOutput = volume.Outputs.First();
-        var oscilator = new BasicOscillatorNode();
+        var mod2 = new NoteModificationNode()
+        {
+            Multipler = 2.001
+        };
+        var mod3 = new NoteModificationNode()
+        {
+            Multipler = 2.998
+        };
+        var mod4 = new NoteModificationNode()
+        {
+            Multipler = 4.003
+        };
+        var oscilator = new BasicOscillatorNode()
+        {
+            Shape = BasicOscillatorNode.WaveShape.Square
+        };
+        var oscilator2 = new BasicOscillatorNode()
+        {
+            Shape = BasicOscillatorNode.WaveShape.Square
+        };
+        var oscilator3 = new BasicOscillatorNode()
+        {
+            Shape = BasicOscillatorNode.WaveShape.Square
+        };
+        var oscilator4 = new BasicOscillatorNode()
+        {
+            Shape = BasicOscillatorNode.WaveShape.Square
+        };
+        var oscMixer = new MixNode();
+        var oscMixer2 = new MixNode();
+        var oscMixer3 = new MixNode();
         var instrument = new Instrument()
         {
-            MainOutput = oscilator.Outputs.First(),
-            
+            MainOutput = oscMixer3.Outputs.First(),
         };
+        instrument.Add(mod2);
+        instrument.Add(mod3);
+        instrument.Add(mod4);
         instrument.Add(oscilator);
+        instrument.Add(oscilator2);
+        instrument.Add(oscilator3);
+        instrument.Add(oscilator4);
+        instrument.Add(oscMixer);
+        instrument.Add(oscMixer2);
+        instrument.Add(oscMixer3);
+        instrument.Connect(mod2.Outputs.First(), oscilator2.Inputs.First());
+        instrument.Connect(mod3.Outputs.First(), oscilator3.Inputs.First());
+        instrument.Connect(mod4.Outputs.First(), oscilator4.Inputs.First());
+        instrument.Connect(oscilator.Outputs.First(), oscMixer.Inputs.First());
+        instrument.Connect(oscilator2.Outputs.First(), oscMixer.Inputs.Skip(1).First());
+        instrument.Connect(oscilator3.Outputs.First(), oscMixer2.Inputs.First());
+        instrument.Connect(oscilator4.Outputs.First(), oscMixer2.Inputs.Skip(1).First());
+        instrument.Connect(oscMixer.Outputs.First(), oscMixer3.Inputs.First());
+        instrument.Connect(oscMixer2.Outputs.First(), oscMixer3.Inputs.Skip(1).First());
         mixer.Add(instrument);
         var noteLine = new NoteLine()
         {

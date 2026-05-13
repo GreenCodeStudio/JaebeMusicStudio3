@@ -12,13 +12,17 @@ public class GuiFactory
         {
             return new VolumeNodeGui(x as VolumeNode);
         }
-        else  if (x is LiveAudioInput)
+        else if (x is LiveAudioInput)
         {
             return new LiveAudioInputGui(x as LiveAudioInput);
         }
-        else  if (x is OverdriveNode)
+        else if (x is OverdriveNode)
         {
             return new OverdriveNodeGui(x as OverdriveNode);
+        }
+        else if (x is Instrument)
+        {
+            return new InstrumentNodeGui(x as Instrument);
         }
         else
         {

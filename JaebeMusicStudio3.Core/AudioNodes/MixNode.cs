@@ -29,7 +29,7 @@ public class MixNode : IAudioNode
     {
         new NodeOutputDefinition()
         {
-            Name = "main",
+            Name = "output",
             Node = this,
             Type = NodeConnectionType.SingleChannelAudio
         }

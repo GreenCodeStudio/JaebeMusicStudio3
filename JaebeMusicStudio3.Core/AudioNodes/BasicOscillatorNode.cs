@@ -6,6 +6,15 @@ namespace JaebeMusicStudio3.Core.AudioNodes;
 
 public class BasicOscillatorNode : IAudioNode
 {
+    public enum WaveShape
+    {
+        Sine,
+        Square,
+        Triangle,
+        Sawtooth
+    }
+
+    public WaveShape Shape { get; set; } = WaveShape.Sine;
     public Guid Id { get; set; } = Guid.NewGuid();
 
     [JsonIgnore]
@@ -36,10 +45,32 @@ public class BasicOscillatorNode : IAudioNode
         if (inputs.TryGetValue("note", out var note))
         {
             var noteNote = note as Note;
-            for (var i = 0; i < chunk.Length; i++)
+            if (Shape == WaveShape.Sine)
             {
-                var secondsOffset = ((float)i+chunk.Start) / chunk.Process.SampleRate;
-                output.Data[i] += MathF.Sin(secondsOffset * (float)noteNote.Pitch * 2 * MathF.PI) * 0.1f;
+                for (var i = 0; i < chunk.Length; i++)
+                {
+                    var secondsOffset = ((float)i + chunk.Start) / chunk.Process.SampleRate;
+                    output.Data[i] += MathF.Sin(secondsOffset * (float)noteNote.Pitch * 2 * MathF.PI) * 0.1f;
+                }
+            }
+            else if (Shape == WaveShape.Square)
+            {
+                for (var i = 0; i < chunk.Length; i++)
+                {
+                    var secondsOffset = ((float)i + chunk.Start) / chunk.Process.SampleRate;
+                    output.Data[i] += (secondsOffset * noteNote.Pitch) % 1.0f > 0.5 ? 0.1f : -0.1f;
+                }
+            }
+            else if (Shape == WaveShape.Triangle)
+            {
+            }
+            else if (Shape == WaveShape.Sawtooth)
+            {
+                for (var i = 0; i < chunk.Length; i++)
+                {
+                    var secondsOffset = ((float)i + chunk.Start) / chunk.Process.SampleRate;
+                    output.Data[i] += (float)((secondsOffset * noteNote.Pitch) % 1.0f) * 0.2f - 0.1f;
+                }
             }
         }
 
