@@ -6,6 +6,7 @@ namespace JaebeMusicStudio3.Core.IO;
 
 public interface INotesInput
 {
+    public string Id { get; }
     public Instrument Instrument { get; set; }
     List<Note> GetNotes(RenderingChunk chunk);
 }

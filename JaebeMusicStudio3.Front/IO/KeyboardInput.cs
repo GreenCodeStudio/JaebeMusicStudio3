@@ -19,6 +19,7 @@ public class KeyboardInput : INotesInput
     private readonly Type type;
     private readonly Thread thread;
 
+    public string Id => $"KeyboardInput{type}";
     public Instrument Instrument { get; set; }
 
     public List<Note> GetNotes(RenderingChunk chunk)

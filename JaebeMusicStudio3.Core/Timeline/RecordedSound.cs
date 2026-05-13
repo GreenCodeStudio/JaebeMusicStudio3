@@ -62,6 +62,9 @@ public class RecordedSound : ITimelineItem, IAudioNode
         return Task.FromResult(new Dictionary<string, object>() { { "output", output } });
     }
 
-    public string Title => "Recorded Sound";
+    public string Title => "Recorded Sound "+(Name??"");
     public event Action Changed;
+    
+    public string? Name { get; set; }
+    public int LineNumber { get; set; }
 }

@@ -93,16 +93,9 @@ public partial class MainWindow : Window
     {
         var mixer = AudioMixer.Current;
         var timeline = Timeline.Current;
-        var dummy = new DummyNoise();
         var volume = new VolumeNode();
-        var input = new LiveAudioInput();
 
-        mixer.Add(dummy);
-        mixer.Add(input);
         mixer.Add(volume);
-        // mixer.Connect(dummy.Outputs.First(), volume.Inputs.First());
-        // mixer.Connect(input.Outputs.First(), volume.Inputs.First());
-        mixer.MainOutput = volume.Outputs.First();
         var mod2 = new NoteModificationNode()
         {
             Multipler = 2.001
@@ -159,6 +152,8 @@ public partial class MainWindow : Window
         instrument.Connect(oscMixer2.Outputs.First(), oscMixer3.Inputs.Skip(1).First());
         instrument.ReorganizePositions();
         mixer.Add(instrument);
+        mixer.MainOutput = volume.Outputs.First();
+        // mixer.Connect(instrument.MainOutput, volume.Inputs.First());
         mixer.ReorganizePositions();
         var noteLine = new NoteLine()
         {

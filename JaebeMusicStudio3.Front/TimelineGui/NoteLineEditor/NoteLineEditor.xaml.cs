@@ -3,6 +3,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using JaebeMusicStudio3.Core.AudioNodes;
+using JaebeMusicStudio3.Core.Mixer;
 using JaebeMusicStudio3.Core.Timeline;
 
 namespace JaebeMusicStudio3.Front.TimelineGui.NoteLineEditor;
@@ -74,6 +76,18 @@ public partial class NoteLineEditor : UserControl
                 item.Notes.Add(newNote);
                 RenderPlane();
                 item.InvokeChanged();
+            }
+        };
+        foreach (var x in AudioMixer.Current.Nodes.Where(n => n is Instrument))
+        {
+            InstrumentSelect.Items.Add(x);
+        }
+        InstrumentSelect.SelectionChanged += (s, e) =>
+        {
+            if (InstrumentSelect.SelectedItem != null)
+            {
+                var instrument = InstrumentSelect.SelectedItem as Instrument;
+                item.Instrument = instrument;
             }
         };
     }

@@ -23,10 +23,13 @@ public class NoteLine : ITimelineItem
     }
 
     public double Tempo { get; set; } = 120;
+    public string? Name { get; set; }
+
     public event Action? Changed;
 
     public void InvokeChanged()
     {
        Changed?.Invoke();
     }
+    public int LineNumber { get; set; }
 }

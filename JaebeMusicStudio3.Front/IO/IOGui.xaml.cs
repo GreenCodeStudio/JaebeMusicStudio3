@@ -8,6 +8,13 @@ public partial class IOGui : UserControl
     public IOGui()
     {
         InitializeComponent();
+        Render();
+        IOWrapper.Changed += Render;
+    }
+
+    private void Render()
+    {
+        InputStack.Children.Clear();
         foreach (var x in IOWrapper.NotesInputs)
         {
             InputStack.Children.Add(new InputGui(x));

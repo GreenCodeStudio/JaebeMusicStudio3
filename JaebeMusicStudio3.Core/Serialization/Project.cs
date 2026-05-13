@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Text.Json;
+using JaebeMusicStudio3.Core.IO;
 using JaebeMusicStudio3.Core.Mixer;
 
 namespace JaebeMusicStudio3.Core.Serialization;
@@ -28,10 +29,13 @@ public class Project
         var ret = new Project()
         {
             Mixer = JaebeMusicStudio3.Core.Mixer.AudioMixer.Current,
-            Timeline = JaebeMusicStudio3.Core.Timeline.Timeline.Current
+            Timeline = JaebeMusicStudio3.Core.Timeline.Timeline.Current,
+            IoAssignments = IOWrapper.Assignments
         };
         return ret;
     }
+
+    public IEnumerable<NotesInputAssignment> IoAssignments { get; set; }
 
     public static Project ReadFromFile(string path)
     {
@@ -52,6 +56,7 @@ public class Project
     {
         JaebeMusicStudio3.Core.Timeline.Timeline.Current = this.Timeline;
         AudioMixer.Current = this.Mixer;
+        IOWrapper.Assignments = this.IoAssignments;
         Loaded?.Invoke();
     }
 

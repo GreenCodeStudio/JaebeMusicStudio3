@@ -40,11 +40,16 @@ public class AudioMixer : IJsonOnDeserialized
             {
                 chunk.Responses[node] = Task.Run(async () =>
                 {
+                    await initialization.Task;
                     var inputs = new Dictionary<string, object>();
                     foreach (var input in node.Inputs)
                     {
                         if (_connections.TryGetValue(input, out NodeOutputDefinition output))
                         {
+                            if(!chunk.Responses.ContainsKey(output.Node))
+                            {
+                                throw new Exception($"Node {output.Node} has not been rendered yet.");
+                            }
                             if ((await chunk.Responses[output.Node]).TryGetValue(output.Name, out object value))
                             {
                                 inputs[input.Name] = value;

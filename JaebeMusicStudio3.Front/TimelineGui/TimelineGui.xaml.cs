@@ -14,7 +14,7 @@ public partial class TimelineGui : UserControl, ITabbableControl
 {
     private readonly Timeline timeline;
     private double SecondsPerPixel = 0.01;
-    private double HorizontalLineHeight = 100.0; 
+    private double HorizontalLineHeight = 100.0;
     private ITimelineItem _movingNode = null;
     private Point? _movingPoint = null;
 
@@ -34,7 +34,8 @@ public partial class TimelineGui : UserControl, ITabbableControl
             {
                 NowMarker.Margin =
                     new Thickness(
-                        (double)RenderingProcess.Current.Position / RenderingProcess.Current.SampleRate /
+                        ((double)RenderingProcess.Current.Position / RenderingProcess.Current.SampleRate -
+                         HorizontalScrollBar.Value) /
                         SecondsPerPixel, 0, 0, 0);
             }
             else
@@ -42,7 +43,7 @@ public partial class TimelineGui : UserControl, ITabbableControl
                 NowMarker.Margin = new Thickness(0, 0, 0, 0);
             }
         };
-        
+
         this.MouseMove += (sender, args) =>
         {
             if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed && _movingNode != null)
@@ -51,7 +52,6 @@ public partial class TimelineGui : UserControl, ITabbableControl
                 var deltaY = args.MouseDevice.GetPosition(this).Y - _movingPoint.Value.Y;
                 _movingNode.OffsetSeconds += deltaX * SecondsPerPixel;
                 _movingPoint = args.MouseDevice.GetPosition(this);
-                
             }
         };
         this.MouseUp += (sender, args) =>
@@ -86,28 +86,23 @@ public partial class TimelineGui : UserControl, ITabbableControl
             }
             else
             {
-                
+                VerticalScrollBar.Value -= e.Delta;
+                Render();
             }
         }
     }
 
     private void Render()
     {
+        VerticalScrollBar.Maximum = Math.Max(0, timeline.Items.Max(x => x.LineNumber + 1) * HorizontalLineHeight + 30);
         HorizontalScrollBar.Maximum = timeline.TotalLength;
         this.TimelineMarker.SecondsPerPixel = SecondsPerPixel;
         this.TimelineMarker.OffsetInSeconds = HorizontalScrollBar.Value;
         var maxWidth = this.ActualWidth * SecondsPerPixel;
-        while (Lines.Children.Count > 2)
-        {
-            Lines.Children.RemoveAt(1);
-        }
+        Lines.Children.Clear();
 
         foreach (var item in timeline.Items)
         {
-            var line = new Grid();
-            line.Height = HorizontalLineHeight;
-            line.HorizontalAlignment = HorizontalAlignment.Left;
-            Lines.Children.Insert(Lines.Children.Count - 1, line);
             var offsetRelative = item.OffsetSeconds - HorizontalScrollBar.Value;
 
             var length = item.LengthSeconds;
@@ -126,17 +121,21 @@ public partial class TimelineGui : UserControl, ITabbableControl
                 continue;
             var control = new TimelineItemGui(item, SecondsPerPixel, offsetRelative > 0 ? 0 : offsetRelative,
                 HorizontalLineHeight, length);
-            if (offsetRelative > 0)
-                control.Margin = new Thickness(offsetRelative / SecondsPerPixel, 0, 0, 0);
+
+            control.Margin = new Thickness((offsetRelative > 0) ? (offsetRelative / SecondsPerPixel) : 0,
+                item.LineNumber * HorizontalLineHeight + 30 - VerticalScrollBar.Value, 0, 0);
 
             control.HorizontalAlignment = HorizontalAlignment.Left;
             control.Width = length / SecondsPerPixel;
-            line.Children.Add(control);
+            control.Height = HorizontalLineHeight;
+            control.HorizontalAlignment = HorizontalAlignment.Left;
+            control.VerticalAlignment = VerticalAlignment.Top;
             control.MouseDown += (sender, args) =>
             {
                 _movingNode = item;
                 _movingPoint = args.MouseDevice.GetPosition(this);
             };
+            Lines.Children.Add(control);
             item.Changed -= OnItemChanged;
             item.Changed += OnItemChanged;
         }

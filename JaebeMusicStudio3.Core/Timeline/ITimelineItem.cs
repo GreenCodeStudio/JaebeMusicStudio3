@@ -10,4 +10,6 @@ public interface ITimelineItem
     event Action Changed;
     public double LengthSeconds { get; }
     public double OffsetSeconds { get; set; }
+    public string? Name { get; set; }
+    public int LineNumber { get; set; }
 }

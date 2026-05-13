@@ -16,23 +16,31 @@ public partial class NanoSoundAnalyzer : UserControl
     }
 
     public NodeOutputDefinition NodeOutputDefinition { get; set; }
-    
+
     private void ChunkCreated(RenderingChunk chunk)
     {
-        var response = chunk.GetResponse(NodeOutputDefinition).Result;
-        Task.Run(() =>
+        try
         {
-            if (response is SingleChannelAudioBuffer responseTyped)
+            var response = chunk.GetResponse(NodeOutputDefinition).Result;
+
+            Task.Run(() =>
             {
-                var (average, max) = MinMax.SingleAbsAvgMaxFast(responseTyped.AsSpan);
-                Dispatcher.BeginInvoke(() =>
+                if (response is SingleChannelAudioBuffer responseTyped)
                 {
-                    var fill = MinMax.ValueToColor(average);
-                    var stroke = MinMax.ValueToColor(max);
-                    indicator.Fill=new SolidColorBrush(Color.FromRgb(fill.R, fill.G, fill.B));
-                    indicator.Stroke=new SolidColorBrush(Color.FromRgb(stroke.R, stroke.G, stroke.B));
-                });
-            }
-        });
+                    var (average, max) = MinMax.SingleAbsAvgMaxFast(responseTyped.AsSpan);
+                    Dispatcher.BeginInvoke(() =>
+                    {
+                        var fill = MinMax.ValueToColor(average);
+                        var stroke = MinMax.ValueToColor(max);
+                        indicator.Fill = new SolidColorBrush(Color.FromRgb(fill.R, fill.G, fill.B));
+                        indicator.Stroke = new SolidColorBrush(Color.FromRgb(stroke.R, stroke.G, stroke.B));
+                    });
+                }
+            });
+        }
+        catch
+        {
+            //ignore
+        }
     }
 }

@@ -44,8 +44,7 @@ public partial class TimelineItemGui : UserControl
             this.MouseDoubleClick += (_, _) =>
             {
                 UiWindow.Open(() =>
-                    new TabView(
-                        () => new NoteLineEditor.NoteLineEditor(itemN)
+                    new TabView(() => new NoteLineEditor.NoteLineEditor(itemN)
                     )
                 );
             };
@@ -53,21 +52,36 @@ public partial class TimelineItemGui : UserControl
             {
                 var grid = new Grid();
                 grid.Background = System.Windows.Media.Brushes.LightGray;
+                if (itemN.Instrument != null)
+                {
+                    var instrument = new Label();
+                    instrument.Content = itemN.Instrument;
+                    MainGrid.Children.Add(instrument);
+                    instrument.Background = System.Windows.Media.Brushes.LightBlue;
+                    instrument.VerticalAlignment = VerticalAlignment.Top;
+                    instrument.Height = 30;
+                    horizontalLineHeight -= 30;
+                    grid.Margin = new Thickness(0, 20, 0, 0);
+                }
+
                 var minPitch = Math.Log2(itemN.Notes.Min(x => x.Pitch)) * 12;
                 var maxPitch = Math.Log2(itemN.Notes.Max(x => x.Pitch)) * 12;
-                foreach (var n in itemN.Notes)
+                if (horizontalLineHeight > 0)
                 {
-                    var pitch = Math.Log2(n.Pitch) * 12;
-                    var rect = new Rectangle();
-                    rect.VerticalAlignment = VerticalAlignment.Top;
-                    rect.HorizontalAlignment = HorizontalAlignment.Left;
-                    rect.Margin = new Thickness((n.Start / itemN.Tempo * 60 + offsetRelative) / secondsPerPixel,
-                        (maxPitch - pitch) / (maxPitch - minPitch + 1) * horizontalLineHeight, 0, 0);
-                    rect.Width = n.Length / itemN.Tempo * 60 / secondsPerPixel;
-                    rect.Height = 1 / (maxPitch - minPitch + 1) * horizontalLineHeight;
-                    rect.Fill = System.Windows.Media.Brushes.Green;
-                    rect.Stroke = System.Windows.Media.Brushes.Black;
-                    grid.Children.Add(rect);
+                    foreach (var n in itemN.Notes)
+                    {
+                        var pitch = Math.Log2(n.Pitch) * 12;
+                        var rect = new Rectangle();
+                        rect.VerticalAlignment = VerticalAlignment.Top;
+                        rect.HorizontalAlignment = HorizontalAlignment.Left;
+                        rect.Margin = new Thickness((n.Start / itemN.Tempo * 60 + offsetRelative) / secondsPerPixel,
+                            (maxPitch - pitch) / (maxPitch - minPitch + 1) * horizontalLineHeight, 0, 0);
+                        rect.Width = n.Length / itemN.Tempo * 60 / secondsPerPixel;
+                        rect.Height = 1 / (maxPitch - minPitch + 1) * horizontalLineHeight;
+                        rect.Fill = System.Windows.Media.Brushes.Green;
+                        rect.Stroke = System.Windows.Media.Brushes.Black;
+                        grid.Children.Add(rect);
+                    }
                 }
 
                 MainGrid.Children.Add(grid);

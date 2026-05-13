@@ -99,7 +99,7 @@ public class Instrument : IAudioNode
                     var subChunk = new RenderingChunk()
                     {
                         Start = offset,
-                        Length = length,
+                        Length = length-i,
                         Process = chunk.Process
                     };
                     foreach (var node in _nodes)
@@ -136,9 +136,20 @@ public class Instrument : IAudioNode
                     if (responseMain.TryGetValue(MainOutput.Name, out object valueMain))
                     {
                         var mainBuffer = valueMain as SingleChannelAudioBuffer;
-                        for (var j = 0; j < length; j++)
+                        if (length < output.Data.Length || length < mainBuffer.Data.Length + i)
                         {
-                            output.Data[j] += mainBuffer.Data[i + j];
+                            throw new Exception("");
+                        }
+
+                        try
+                        {
+                            for (var j = 0; j < length-i; j++)
+                            {
+                                output.Data[j+i] += mainBuffer.Data[ j];
+                            }
+                        }catch
+                        {
+                            throw new Exception("");
                         }
                     }
                 }
