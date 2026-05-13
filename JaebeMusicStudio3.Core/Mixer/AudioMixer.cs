@@ -7,6 +7,8 @@ namespace JaebeMusicStudio3.Core.Mixer;
 public class AudioMixer:IJsonOnDeserialized
 {
     public static AudioMixer Current = new AudioMixer();
+    [JsonInclude]
+    [JsonPropertyName("Nodes")]
     private List<IAudioNode> _nodes = new List<IAudioNode>();
     public NodeOutputDefinition MainOutput { get; set; }
 
@@ -62,7 +64,7 @@ public class AudioMixer:IJsonOnDeserialized
         }
         Changed?.Invoke();
     }
-
+[JsonIgnore]
     public IEnumerable<IAudioNode> Nodes
     {
         get
@@ -163,6 +165,9 @@ public class AudioMixer:IJsonOnDeserialized
 
     public void OnDeserialized()
     {
-        _connections=_connections.ToDictionary(kv => kv.Key, kv => kv.Value);
+        _connections=_connections.ToDictionary(
+            kv => _nodes.Find(n=>n.Id==kv.Key.NodeId).Inputs.First(i=>i.Name==kv.Key.Name), 
+            kv => _nodes.Find(n=>n.Id==kv.Value.NodeId).Outputs.First(i=>i.Name==kv.Value.Name)
+            );
     }
 }

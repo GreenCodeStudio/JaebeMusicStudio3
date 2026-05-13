@@ -6,7 +6,7 @@ namespace JaebeMusicStudio3.Core.AudioNodes;
 
 public class OverdriveNode : IAudioNode
 {
-    public Guid Id { get; }=Guid.NewGuid();
+    public Guid Id { get;set; }=Guid.NewGuid();
     [JsonIgnore]
     public IEnumerable<NodeInputDefinition> Inputs => new List<NodeInputDefinition>()
     {

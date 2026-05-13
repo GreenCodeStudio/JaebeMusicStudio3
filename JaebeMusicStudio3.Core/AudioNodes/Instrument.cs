@@ -2,14 +2,24 @@
 using System.Text.Json.Serialization;
 using JaebeMusicStudio3.Core.AudioRendering;
 using JaebeMusicStudio3.Core.IO;
+using JaebeMusicStudio3.Core.Mixer;
 using JaebeMusicStudio3.Core.Timeline;
 
 namespace JaebeMusicStudio3.Core.AudioNodes;
 
 public class Instrument : IAudioNode
 {
-    
-    public Guid Id { get; }=Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    private List<IAudioNode> _nodes = new List<IAudioNode>();
+    public NodeOutputDefinition MainOutput { get; set; }
+
+
+    private Dictionary<NodeInputDefinition, NodeOutputDefinition> _connections =
+        new Dictionary<NodeInputDefinition, NodeOutputDefinition>();
+
+    private Dictionary<Guid, VisualPosition> _positions = new Dictionary<Guid, VisualPosition>();
+
     [JsonIgnore]
     public IEnumerable<NodeInputDefinition> Inputs => new List<NodeInputDefinition>()
     {
@@ -33,7 +43,7 @@ public class Instrument : IAudioNode
         public double Length { get; set; }
     }
 
-    public Task<Dictionary<string, object>> Render(RenderingChunk chunk, Dictionary<string, object> inputs)
+    public async Task<Dictionary<string, object>> Render(RenderingChunk chunk, Dictionary<string, object> inputs)
     {
         var output = new SingleChannelAudioBuffer(chunk.Process.SampleRate, chunk.Length);
         List<NoteReformed> notes = new();
@@ -79,24 +89,188 @@ public class Instrument : IAudioNode
             if (startOffset < chunkLengthSeconds && endOffset > 0)
             {
                 var i = startOffset < 0 ? 0 : (int)(startOffset * chunk.Process.SampleRate);
+                var offset = startOffset > 0 ? 0 : (int)(-startOffset * chunk.Process.SampleRate);
                 var length = (int)(chunkLengthSeconds * chunk.Process.SampleRate);
                 if (length > chunk.Length)
                     length = (int)chunk.Length;
-                for (; i < length; i++)
+                if (i < length)
                 {
-                    var secondsOffset = (float)i / chunk.Process.SampleRate - (float)startOffset;
-                    output.Data[i] += MathF.Sin(secondsOffset * (float)note.Pitch * 2 * MathF.PI) * 0.1f;
+                    var subChunk = new RenderingChunk()
+                    {
+                        Start = offset,
+                        Length = length,
+                        Process = chunk.Process
+                    };
+                    foreach (var node in _nodes)
+                    {
+                        subChunk.Responses[node] = Task.Run(async () =>
+                        {
+                            var inputs = new Dictionary<string, object>();
+                            foreach (var input in node.Inputs)
+                            {
+                                if (_connections.TryGetValue(input, out NodeOutputDefinition output))
+                                {
+                                    if ((await subChunk.Responses[output.Node]).TryGetValue(output.Name,
+                                            out object value))
+                                    {
+                                        inputs[input.Name] = value;
+                                    }
+                                }
+                            }
+
+                            return await node.Render(subChunk, inputs);
+                        });
+                    }
+
+                    var responseMain = await subChunk.Responses[MainOutput.Node];
+                    if (responseMain.TryGetValue(MainOutput.Name, out object valueMain))
+                    {
+                        var mainBuffer = valueMain as SingleChannelAudioBuffer;
+                        for (var j = 0; j < length; j++)
+                        {
+                            output.Data[j] += mainBuffer.Data[i + j];
+                        }
+                    }
                 }
             }
         }
 
-        return Task.FromResult(new Dictionary<string, object>()
+        return new Dictionary<string, object>()
         {
             {
                 "output", output
             }
-        });
+        };
     }
 
     public string Title => "Instrument";
+
+    public void Connect(NodeOutputDefinition output, NodeInputDefinition input)
+    {
+        lock (this)
+        {
+            _connections.Add(input, output);
+        }
+
+        Changed?.Invoke();
+    }
+
+    [JsonIgnore]
+    public IEnumerable<IAudioNode> Nodes
+    {
+        get
+        {
+            lock (this)
+            {
+                return _nodes.ToArray();
+            }
+        }
+    }
+
+    [JsonIgnore]
+    public KeyValuePair<NodeInputDefinition, NodeOutputDefinition>[] Connections
+    {
+        get
+        {
+            lock (this)
+            {
+                return _connections.ToArray();
+            }
+        }
+    }
+
+    public VisualPosition GetPosition(IAudioNode node)
+    {
+        lock (this)
+        {
+            if (_positions.ContainsKey(node.Id))
+                return _positions[node.Id];
+            else
+            {
+                var pos = new VisualPosition();
+                _positions[node.Id] = pos;
+                return pos;
+            }
+        }
+    }
+
+    public void SetPosition(IAudioNode node, VisualPosition position)
+    {
+        lock (this)
+        {
+            _positions[node.Id] = position;
+        }
+
+        Changed?.Invoke();
+    }
+
+    public void Disconnect(KeyValuePair<NodeInputDefinition, NodeOutputDefinition> keyValuePair)
+    {
+        lock (this)
+        {
+            _connections.Remove(keyValuePair.Key);
+        }
+
+        Changed?.Invoke();
+    }
+
+    [JsonPropertyName("Connections")]
+    [JsonInclude]
+    public IEnumerable<KeyValuePair<NodeInputDefinition, NodeOutputDefinition>> SerializableConnections
+    {
+        get
+        {
+            lock (this)
+            {
+                return _connections.ToArray();
+            }
+        }
+        set
+        {
+            lock (this)
+            {
+                _connections = value.ToDictionary(kv => kv.Key, kv => kv.Value);
+            }
+        }
+    }
+
+    [JsonPropertyName("Positions")]
+    [JsonInclude]
+    public IEnumerable<KeyValuePair<Guid, VisualPosition>> SerializablePositions
+    {
+        get
+        {
+            lock (this)
+            {
+                return _positions.ToDictionary(kv => kv.Key, kv => kv.Value).ToArray();
+            }
+        }
+        set
+        {
+            lock (this)
+            {
+                _positions = value.ToDictionary(kv => kv.Key, kv => kv.Value);
+            }
+        }
+    }
+
+    public void OnDeserialized()
+    {
+        _connections = _connections.ToDictionary(
+            kv => _nodes.Find(n => n.Id == kv.Key.NodeId).Inputs.First(i => i.Name == kv.Key.Name),
+            kv => _nodes.Find(n => n.Id == kv.Value.NodeId).Outputs.First(i => i.Name == kv.Value.Name)
+        );
+    }
+
+    public event Action Changed;
+
+    public void Add(IAudioNode node)
+    {
+        lock (this)
+        {
+            _nodes.Add(node);
+        }
+
+        Changed?.Invoke();
+    }
 }

@@ -10,7 +10,7 @@ namespace JaebeMusicStudio3.Core.AudioNodes;
 public class LiveAudioInput : IAudioNode
 {
     
-    public Guid Id { get; }=Guid.NewGuid();
+    public Guid Id { get;set; }=Guid.NewGuid();
     private List<float[]> buffers = new();
     private int bufferPosition = 0;
     private WasapiCapture _capture;

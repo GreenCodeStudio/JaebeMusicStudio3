@@ -2,5 +2,6 @@
 
 public enum NodeConnectionType
 {
-    SingleChannelAudio
+    SingleChannelAudio,
+    Note
 }

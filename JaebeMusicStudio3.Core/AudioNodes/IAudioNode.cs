@@ -12,7 +12,7 @@ namespace JaebeMusicStudio3.Core.AudioNodes;
 
 public interface IAudioNode
 {
-    Guid Id { get; }
+    Guid Id { get; set; }
     [JsonIgnore]
     IEnumerable<NodeInputDefinition> Inputs { get; }
     

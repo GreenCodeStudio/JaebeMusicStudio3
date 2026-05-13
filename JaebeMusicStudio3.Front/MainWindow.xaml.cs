@@ -103,8 +103,13 @@ public partial class MainWindow : Window
         // mixer.Connect(dummy.Outputs.First(), volume.Inputs.First());
         // mixer.Connect(input.Outputs.First(), volume.Inputs.First());
         mixer.MainOutput = volume.Outputs.First();
-
-        var instrument = new Instrument();
+        var oscilator = new BasicOscillatorNode();
+        var instrument = new Instrument()
+        {
+            MainOutput = oscilator.Outputs.First(),
+            
+        };
+        instrument.Add(oscilator);
         mixer.Add(instrument);
         var noteLine = new NoteLine()
         {
@@ -177,7 +182,7 @@ public partial class MainWindow : Window
         {
             UiWindow.Open(() =>
                 new TabView(
-                    () => new MixerGui.MixerGui(mixer),
+                    () => new MixerGui.MixerGui(AudioMixer.Current),
                     () => new TimelineGui.TimelineGui(Timeline.Current),
                     () => new IOGui()
                 )
