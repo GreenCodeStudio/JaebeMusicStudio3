@@ -20,6 +20,7 @@
             <StackPanel Orientation="Horizontal">
                 <Button Click="LoadFileClick">Load file</Button>
                 <Button Click="AudioRecorderClick">Audio recorder</Button>
+                <Button Click="NoteLineClick">Note line</Button>
                 <Button Click="ZoomOut">Zoom -</Button>
                 <Button Click="ZoomIn">Zoom +</Button>
                 <Button Click="ZoomHOut">Zoom H -</Button>
@@ -31,7 +32,7 @@
                 <Rectangle Fill="Brown" Width="1" HorizontalAlignment="Left" Name="NowMarker"></Rectangle>
                 <Grid Name="Lines" >
                 </Grid>
-                <local:TimelineMarker Height="30" x:Name="TimelineMarker" VerticalAlignment="Top" Background="#8fff" />
+                <local:TimelineMarker Height="30" x:Name="TimelineMarker" VerticalAlignment="Top" Background="#8fff" TimeClicked="TimelineMarker_OnTimeClicked" />
             </Grid>
             <ScrollBar Orientation="Horizontal" Scroll="ScrollBar_OnScroll" Name="HorizontalScrollBar" Grid.Row="2"></ScrollBar>
             <ScrollBar Orientation="Vertical" Scroll="ScrollBar_OnScroll" Name="VerticalScrollBar" Grid.Row="1" Grid.Column="1"></ScrollBar>

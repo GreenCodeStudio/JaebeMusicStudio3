@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using JaebeMusicStudio3.Core.Serialization;
+using JaebeMusicStudio3.Front.TimelineGui;
 using Microsoft.Win32;
 
 namespace JaebeMusicStudio3.Front;
@@ -122,6 +123,7 @@ title.Margin = new Thickness(4, 0, 4, 4);
             }
         };
         contextMenu.Items.Add(save);
+        
         var open = new MenuItem();
         open.Header = "Open";
         open.Click += (x, y) =>
@@ -138,6 +140,19 @@ title.Margin = new Thickness(4, 0, 4, 4);
             }
         };
         contextMenu.Items.Add(open);
+        
+                
+        var render = new MenuItem();
+        render.Header = "render";
+        render.Click += (x, y) =>
+        {
+            UiWindow.Open(() =>
+                new TabView(() => new FinalRenderGui()
+                )
+            );
+        };
+        contextMenu.Items.Add(render);
+        
         contextMenu.IsOpen = true;
     }
 }

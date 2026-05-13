@@ -14,7 +14,7 @@ public class Timeline
     private List<ITimelineItem> _items = new List<ITimelineItem>();
 
     [JsonIgnore] public IReadOnlyList<ITimelineItem> Items => _items.ToList();
-    public double TotalLength => 60; //tmp
+    public double TotalLength => Items.Select(x=>x.OffsetSeconds+x.LengthSeconds).DefaultIfEmpty(0).Max();
 
     public event Action Changed;
 
@@ -55,7 +55,7 @@ public class Timeline
                             {
                                 Start = (double)neo.AbsoluteTime / file.DeltaTicksPerQuarterNote ,
                                 Pitch = 8.1758 * Math.Pow(2, neo.NoteNumber / 12.0),
-                                // Volume = (float)neo.Velocity / 127,
+                                Volume = neo.Velocity==0?1:((double)neo.Velocity / 127),
                                 Length = neo.OffEvent==null?0:((double)neo.NoteLength / file.DeltaTicksPerQuarterNote)
                             };
                             linesPerChannels[e.Channel].Notes.Add(note);

@@ -8,7 +8,15 @@ public partial class TimelineMarker : UserControl
     {
         InitializeComponent();
         Render();
+        MouseDown += (s, e) =>
+        {
+            var pos = e.GetPosition(this);
+            var timeInSeconds = OffsetInSeconds + pos.X * SecondsPerPixel;
+            TimeClicked?.Invoke(this, timeInSeconds);
+        };
     }
+
+    public event EventHandler<double> TimeClicked;
 
     public double SecondsPerPixel
     {
@@ -73,11 +81,12 @@ public partial class TimelineMarker : UserControl
             var bases = new double[] { 1, 5, 15, 60, 5 * 60, 15 * 60, 60 * 60, 3 * 60 * 60, 6 * 60 * 60, 24 * 60 * 60 };
             foreach (var b in bases)
             {
-                if(b/SecondsPerPixel > basePixelsStep)
+                if (b / SecondsPerPixel > basePixelsStep)
                 {
                     return b;
                 }
             }
+
             return bases.Last();
         }
     }
@@ -88,16 +97,16 @@ public partial class TimelineMarker : UserControl
         if (value >= 3600)
         {
             var hours = Math.Floor(value / 3600);
-            ret += hours.ToString().PadLeft(2,'0') + ":";
+            ret += hours.ToString().PadLeft(2, '0') + ":";
             value -= hours * 3600;
             var minutes = Math.Floor(value / 60);
-            ret += minutes.ToString().PadLeft(2,'0') + ":";
+            ret += minutes.ToString().PadLeft(2, '0') + ":";
             value -= minutes * 60;
         }
         else if (value >= 60)
         {
             var minutes = Math.Floor(value / 60);
-            ret += minutes.ToString().PadLeft(2,'0') + ":";
+            ret += minutes.ToString().PadLeft(2, '0') + ":";
             value -= minutes * 60;
         }
 

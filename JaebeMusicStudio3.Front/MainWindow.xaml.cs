@@ -93,20 +93,23 @@ public partial class MainWindow : Window
     {
         var mixer = AudioMixer.Current;
         var timeline = Timeline.Current;
-        var volume = new VolumeNode();
+        var volume = new VolumeNode()
+        {
+            Volume = 0.01f
+        };
 
         mixer.Add(volume);
         var mod2 = new NoteModificationNode()
         {
-            Multipler = 2.001
+            Multipler = 1.001
         };
         var mod3 = new NoteModificationNode()
         {
-            Multipler = 2.998
+            Multipler = .998
         };
         var mod4 = new NoteModificationNode()
         {
-            Multipler = 4.003
+            Multipler = 1.003
         };
         var oscilator = new BasicOscillatorNode()
         {
@@ -155,60 +158,6 @@ public partial class MainWindow : Window
         mixer.MainOutput = volume.Outputs.First();
         // mixer.Connect(instrument.MainOutput, volume.Inputs.First());
         mixer.ReorganizePositions();
-        var noteLine = new NoteLine()
-        {
-            Instrument = instrument,
-            Notes = new List<Note>()
-            {
-                new Note()
-                {
-                    Start = 0,
-                    Length = 0.5,
-                    Pitch = 440
-                },
-                new Note()
-                {
-                    Start = 1,
-                    Length = 0.5,
-                    Pitch = 440
-                },
-                new Note()
-                {
-                    Start = 2,
-                    Length = 0.5,
-                    Pitch = 440 * Math.Pow(2, 4.0 / 12)
-                }
-            }
-        };
-        timeline.Add(noteLine);
-        var noteLine2 = new NoteLine()
-        {
-            Instrument = instrument,
-            OffsetSeconds = 5.0,
-            Notes = new List<Note>()
-            {
-                new Note()
-                {
-                    Start = 0,
-                    Length = 0.5,
-                    Pitch = 440
-                },
-                new Note()
-                {
-                    Start = 1,
-                    Length = 0.5,
-                    Pitch = 440 * Math.Pow(2, 1.0 / 12)
-                },
-                new Note()
-                {
-                    Start = 2,
-                    Length = 0.5,
-                    Pitch = 440 * Math.Pow(2, 2.0 / 12)
-                }
-            }
-        };
-        timeline.Add(noteLine2);
-
         var process = RenderingProcess.Current;
         MainWindow.provider = new WaveProvider(mixer);
         provider.WaveFormat = new WaveFormat(48000, 2);

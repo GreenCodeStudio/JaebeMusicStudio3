@@ -45,12 +45,13 @@ public class BasicOscillatorNode : IAudioNode
         if (inputs.TryGetValue("note", out var note))
         {
             var noteNote = note as Note;
+            var volumeFloat = (float)noteNote.Volume;
             if (Shape == WaveShape.Sine)
             {
                 for (var i = 0; i < chunk.Length; i++)
                 {
                     var secondsOffset = ((float)i + chunk.Start) / chunk.Process.SampleRate;
-                    output.Data[i] += MathF.Sin(secondsOffset * (float)noteNote.Pitch * 2 * MathF.PI) * 0.1f;
+                    output.Data[i] += MathF.Sin(secondsOffset * (float)noteNote.Pitch * 2 * MathF.PI) * volumeFloat;
                 }
             }
             else if (Shape == WaveShape.Square)
@@ -58,7 +59,7 @@ public class BasicOscillatorNode : IAudioNode
                 for (var i = 0; i < chunk.Length; i++)
                 {
                     var secondsOffset = ((float)i + chunk.Start) / chunk.Process.SampleRate;
-                    output.Data[i] += (secondsOffset * noteNote.Pitch) % 1.0f > 0.5 ? 0.1f : -0.1f;
+                    output.Data[i] += (secondsOffset * noteNote.Pitch) % 1.0f > 0.5 ? volumeFloat : -volumeFloat;
                 }
             }
             else if (Shape == WaveShape.Triangle)

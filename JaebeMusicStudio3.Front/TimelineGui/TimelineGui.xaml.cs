@@ -94,7 +94,8 @@ public partial class TimelineGui : UserControl, ITabbableControl
 
     private void Render()
     {
-        VerticalScrollBar.Maximum = Math.Max(0, timeline.Items.Max(x => x.LineNumber + 1) * HorizontalLineHeight + 30);
+        VerticalScrollBar.Maximum = Math.Max(0,
+            timeline.Items.Select(x => x.LineNumber + 1).DefaultIfEmpty(0).Max() * HorizontalLineHeight + 30);
         HorizontalScrollBar.Maximum = timeline.TotalLength;
         this.TimelineMarker.SecondsPerPixel = SecondsPerPixel;
         this.TimelineMarker.OffsetInSeconds = HorizontalScrollBar.Value;
@@ -220,5 +221,28 @@ public partial class TimelineGui : UserControl, ITabbableControl
     private void ScrollBar_OnScroll(object sender, ScrollEventArgs e)
     {
         Render();
+    }
+
+    private void TimelineMarker_OnTimeClicked(object? sender, double e)
+    {
+        RenderingProcess.Current = new RenderingProcess(true, RenderingProcess.Current.WaveFormat,
+            (long)(e * RenderingProcess.Current.SampleRate));
+    }
+
+    private void NoteLineClick(object sender, RoutedEventArgs e)
+    {
+        Timeline.Current.Add(new NoteLine()
+        {
+            Name = "New Line", Notes = new List<Note>()
+            {
+                new Note()
+                {
+                    Pitch = 440,
+                    Volume = 1,
+                    Start = 0,
+                    Length = 1
+                }
+            }
+        });
     }
 }

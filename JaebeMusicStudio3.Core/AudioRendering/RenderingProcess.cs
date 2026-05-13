@@ -2,12 +2,12 @@
 
 namespace JaebeMusicStudio3.Core.AudioRendering;
 
-public class RenderingProcess(bool useTimeline, WaveFormat waveFormat)
+public class RenderingProcess(bool useTimeline, WaveFormat waveFormat, long position = 0)
 {
     public static RenderingProcess Current = new RenderingProcess(false, new WaveFormat(48000, 16, 2));
     public WaveFormat WaveFormat { get; set; } = waveFormat;
     public int SampleRate => this.WaveFormat.SampleRate;
-    public long Position { get; private set; } = 0;
+    public long Position { get; private set; } = position;
     public bool UseTimeline => useTimeline;
 
     public RenderingChunk GetChunk(long length)
@@ -19,6 +19,7 @@ public class RenderingProcess(bool useTimeline, WaveFormat waveFormat)
             return ret;
         }
     }
+
     public RenderingChunk GetEmptyChunk()
     {
         lock (this)
