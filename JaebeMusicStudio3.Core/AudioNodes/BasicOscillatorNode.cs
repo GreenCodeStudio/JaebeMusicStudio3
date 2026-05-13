@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using JaebeMusicStudio3.Core.AudioRendering;
+using JaebeMusicStudio3.Core.Timeline;
 
 namespace JaebeMusicStudio3.Core.AudioNodes;
 
@@ -32,10 +33,14 @@ public class BasicOscillatorNode : IAudioNode
     public Task<Dictionary<string, object>> Render(RenderingChunk chunk, Dictionary<string, object> inputs)
     {
         var output = new SingleChannelAudioBuffer(chunk.Process.SampleRate, chunk.Length);
-        for (var i = 0; i < chunk.Length; i++)
+        if (inputs.TryGetValue("note", out var note))
         {
-            var secondsOffset = (float)i / chunk.Process.SampleRate;
-            output.Data[i] += MathF.Sin(secondsOffset * (float)1000 * 2 * MathF.PI) * 0.1f;
+            var noteNote = note as Note;
+            for (var i = 0; i < chunk.Length; i++)
+            {
+                var secondsOffset = ((float)i+chunk.Start) / chunk.Process.SampleRate;
+                output.Data[i] += MathF.Sin(secondsOffset * (float)noteNote.Pitch * 2 * MathF.PI) * 0.1f;
+            }
         }
 
         return Task.FromResult(new Dictionary<string, object>()

@@ -115,6 +115,14 @@ public class Instrument : IAudioNode
                                     {
                                         inputs[input.Name] = value;
                                     }
+                                }else if (input.Type == NodeConnectionType.Note)
+                                {
+                                    inputs[input.Name] = new Note()
+                                    {
+                                        Pitch = note.Pitch,
+                                        Start = 0,
+                                        Length = note.Length
+                                    };
                                 }
                             }
 
