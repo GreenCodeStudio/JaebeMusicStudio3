@@ -4,6 +4,7 @@ using JaebeMusicStudio3.Core.AudioRendering;
 using JaebeMusicStudio3.Core.IO;
 using JaebeMusicStudio3.Core.Mixer;
 using JaebeMusicStudio3.Core.Timeline;
+using JaebeMusicStudio3.Front.Utils;
 
 namespace JaebeMusicStudio3.Core.AudioNodes;
 
@@ -115,7 +116,8 @@ public class Instrument : IAudioNode
                                     {
                                         inputs[input.Name] = value;
                                     }
-                                }else if (input.Type == NodeConnectionType.Note)
+                                }
+                                else if (input.Type == NodeConnectionType.Note)
                                 {
                                     inputs[input.Name] = new Note()
                                     {
@@ -280,5 +282,20 @@ public class Instrument : IAudioNode
         }
 
         Changed?.Invoke();
+    }
+
+    public void ReorganizePositions()
+    {
+        var newPositions = NodesReorganizer.Reorganize(MainOutput.Node, Nodes, Connections);
+        var minX = newPositions.Values.Min(x => x.x);
+        var minY = newPositions.Values.Min(x => x.y);
+        foreach (var kv in newPositions)
+        {
+            SetPosition(kv.Key, new VisualPosition()
+            {
+                X = (kv.Value.x - minX) * 250,
+                Y = (kv.Value.y - minY) * 150
+            });
+        }
     }
 }

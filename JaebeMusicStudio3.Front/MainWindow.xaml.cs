@@ -157,7 +157,9 @@ public partial class MainWindow : Window
         instrument.Connect(oscilator4.Outputs.First(), oscMixer2.Inputs.Skip(1).First());
         instrument.Connect(oscMixer.Outputs.First(), oscMixer3.Inputs.First());
         instrument.Connect(oscMixer2.Outputs.First(), oscMixer3.Inputs.Skip(1).First());
+        instrument.ReorganizePositions();
         mixer.Add(instrument);
+        mixer.ReorganizePositions();
         var noteLine = new NoteLine()
         {
             Instrument = instrument,

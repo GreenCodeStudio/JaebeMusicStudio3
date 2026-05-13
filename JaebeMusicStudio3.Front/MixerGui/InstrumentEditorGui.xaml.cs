@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using JaebeMusicStudio3.Core.AudioNodes;
 using JaebeMusicStudio3.Core.Mixer;
@@ -11,7 +12,7 @@ public partial class InstrumentEditorGui : UserControl
     public InstrumentEditorGui(Instrument instrument)
     {
         this.Instrument = instrument;
-        InitializeComponent();      
+        InitializeComponent();
         Render();
         instrument.Changed += () => { Dispatcher.Invoke(() => Render()); };
         var contextMenu = new ContextMenu();
@@ -62,6 +63,15 @@ public partial class InstrumentEditorGui : UserControl
             _movingNode = null;
             _movingPoint = null;
         };
+        MouseWheel += (sender, args) =>
+        {
+            var scaleValue = Math.Pow(2, args.Delta / 200.0);
+            var mousePos = args.MouseDevice.GetPosition(PlaneWrapper);
+            var translation = new TranslateTransform(-mousePos.X, -mousePos.Y);
+            var translationReverse = new TranslateTransform(+mousePos.X, +mousePos.Y);
+            var scale = new System.Windows.Media.ScaleTransform(scaleValue, scaleValue);
+            Plane.RenderTransform = new MatrixTransform(Plane.RenderTransform.Value * translation.Value * scale.Value * translationReverse.Value);
+        };
     }
 
     public Instrument Instrument { get; set; }
@@ -86,10 +96,11 @@ public partial class InstrumentEditorGui : UserControl
             {
                 nodeGui.BorderBrush = System.Windows.Media.Brushes.Red;
                 nodeGui.BorderThickness = new System.Windows.Thickness(2);
-                nodeGui.Margin = new System.Windows.Thickness(pos.X-2, pos.Y-2, 0, 0);
+                nodeGui.Margin = new System.Windows.Thickness(pos.X - 2, pos.Y - 2, 0, 0);
                 nodeGui.Width += 4;
                 nodeGui.Height += 4;
             }
+
             nodeGui.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
             nodeGui.VerticalAlignment = System.Windows.VerticalAlignment.Top;
             Plane.Children.Add(nodeGui);
@@ -115,7 +126,11 @@ public partial class InstrumentEditorGui : UserControl
                 _movingPoint = args.MouseDevice.GetPosition(Plane);
             };
 
-            // nodeGui.MouseUp += (sender, args) => { ReleaseMouseCapture(); };
+            nodeGui.MouseUp += (sender, args) =>
+            {
+                _movingNode = null;
+                _movingPoint = null;
+            };
             nodeGui.Connect += (input, output) => { Instrument.Connect(output, input); };
             nodeGui.DisconnectByOutput += (output) =>
             {
@@ -147,5 +162,5 @@ public partial class InstrumentEditorGui : UserControl
             line.Y2 = lineEndNode.Margin.Top + 40 + 30 * endIndex;
             Plane.Children.Add(line);
         }
-    }   
+    }
 }

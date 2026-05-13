@@ -1,15 +1,17 @@
 ﻿using System.Text.Json.Serialization;
 using JaebeMusicStudio3.Core.AudioNodes;
 using JaebeMusicStudio3.Core.AudioRendering;
+using JaebeMusicStudio3.Front.Utils;
 
 namespace JaebeMusicStudio3.Core.Mixer;
 
-public class AudioMixer:IJsonOnDeserialized
+public class AudioMixer : IJsonOnDeserialized
 {
     public static AudioMixer Current = new AudioMixer();
-    [JsonInclude]
-    [JsonPropertyName("Nodes")]
+
+    [JsonInclude] [JsonPropertyName("Nodes")]
     private List<IAudioNode> _nodes = new List<IAudioNode>();
+
     public NodeOutputDefinition MainOutput { get; set; }
 
 
@@ -18,12 +20,14 @@ public class AudioMixer:IJsonOnDeserialized
 
     private Dictionary<Guid, VisualPosition> _positions = new Dictionary<Guid, VisualPosition>();
     public event Action Changed;
+
     public void Add(IAudioNode node)
     {
         lock (this)
         {
             _nodes.Add(node);
         }
+
         Changed?.Invoke();
     }
 
@@ -62,9 +66,11 @@ public class AudioMixer:IJsonOnDeserialized
         {
             _connections.Add(input, output);
         }
+
         Changed?.Invoke();
     }
-[JsonIgnore]
+
+    [JsonIgnore]
     public IEnumerable<IAudioNode> Nodes
     {
         get
@@ -75,7 +81,8 @@ public class AudioMixer:IJsonOnDeserialized
             }
         }
     }
-[JsonIgnore]
+
+    [JsonIgnore]
     public KeyValuePair<NodeInputDefinition, NodeOutputDefinition>[] Connections
     {
         get
@@ -101,12 +108,14 @@ public class AudioMixer:IJsonOnDeserialized
             }
         }
     }
+
     public void SetPosition(IAudioNode node, VisualPosition position)
     {
         lock (this)
         {
             _positions[node.Id] = position;
         }
+
         Changed?.Invoke();
     }
 
@@ -116,13 +125,14 @@ public class AudioMixer:IJsonOnDeserialized
         {
             _connections.Remove(keyValuePair.Key);
         }
+
         Changed?.Invoke();
     }
 
     public void LoadVstFile(string filePath)
     {
-        
     }
+
     [JsonPropertyName("Connections")]
     [JsonInclude]
     public IEnumerable<KeyValuePair<NodeInputDefinition, NodeOutputDefinition>> SerializableConnections
@@ -165,9 +175,24 @@ public class AudioMixer:IJsonOnDeserialized
 
     public void OnDeserialized()
     {
-        _connections=_connections.ToDictionary(
-            kv => _nodes.Find(n=>n.Id==kv.Key.NodeId).Inputs.First(i=>i.Name==kv.Key.Name), 
-            kv => _nodes.Find(n=>n.Id==kv.Value.NodeId).Outputs.First(i=>i.Name==kv.Value.Name)
-            );
+        _connections = _connections.ToDictionary(
+            kv => _nodes.Find(n => n.Id == kv.Key.NodeId).Inputs.First(i => i.Name == kv.Key.Name),
+            kv => _nodes.Find(n => n.Id == kv.Value.NodeId).Outputs.First(i => i.Name == kv.Value.Name)
+        );
+    }
+
+    public void ReorganizePositions()
+    {
+        var newPositions = NodesReorganizer.Reorganize(MainOutput.Node, Nodes, Connections);
+        var minX = newPositions.Values.Min(x => x.x);
+        var minY = newPositions.Values.Min(x => x.y);
+        foreach (var kv in newPositions)
+        {
+            SetPosition(kv.Key, new VisualPosition()
+            {
+                X = (kv.Value.x - minX) * 250,
+                Y = (kv.Value.y - minY) * 150
+            });
+        }
     }
 }

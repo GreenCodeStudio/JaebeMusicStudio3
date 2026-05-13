@@ -24,6 +24,10 @@ public class GuiFactory
         {
             return new InstrumentNodeGui(x as Instrument);
         }
+        else if (x is NoteModificationNode)
+        {
+            return new NoteModificationNodeGui(x as NoteModificationNode);
+        }
         else
         {
             return null;

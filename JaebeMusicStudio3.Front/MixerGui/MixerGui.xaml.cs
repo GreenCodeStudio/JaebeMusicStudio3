@@ -117,7 +117,11 @@ public partial class MixerGui : UserControl
                 _movingPoint = args.MouseDevice.GetPosition(Plane);
             };
 
-            // nodeGui.MouseUp += (sender, args) => { ReleaseMouseCapture(); };
+            nodeGui.MouseUp += (sender, args) =>
+            {
+                _movingNode = null;
+                _movingPoint = null;
+            };
             nodeGui.Connect += (input, output) => { Mixer.Connect(output, input); };
             nodeGui.DisconnectByOutput += (output) =>
             {
