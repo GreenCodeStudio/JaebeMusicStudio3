@@ -40,6 +40,7 @@ public class NoteModificationNode:IAudioNode
             Length = input.Length,
             Start = input.Start,
             Pitch = input.Pitch * Multipler,
+            Volume=input.Volume
         };
 
         return Task.FromResult(new Dictionary<string, object>() { { "output", output } });

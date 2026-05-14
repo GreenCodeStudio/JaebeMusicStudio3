@@ -70,13 +70,17 @@ public partial class TimelineItemGui : UserControl
                 {
                     foreach (var n in itemN.Notes)
                     {
+                        var offsetLeftPixels = (n.Start / itemN.Tempo * 60 + offsetRelative) / secondsPerPixel;
+                        var widthPixels = n.Length / itemN.Tempo * 60 / secondsPerPixel;
+                        if(offsetLeftPixels+widthPixels<0||offsetLeftPixels>visibleLength/secondsPerPixel)
+                            continue;
                         var pitch = Math.Log2(n.Pitch) * 12;
                         var rect = new Rectangle();
                         rect.VerticalAlignment = VerticalAlignment.Top;
                         rect.HorizontalAlignment = HorizontalAlignment.Left;
-                        rect.Margin = new Thickness((n.Start / itemN.Tempo * 60 + offsetRelative) / secondsPerPixel,
+                        rect.Margin = new Thickness(offsetLeftPixels,
                             (maxPitch - pitch) / (maxPitch - minPitch + 1) * horizontalLineHeight, 0, 0);
-                        rect.Width = n.Length / itemN.Tempo * 60 / secondsPerPixel;
+                        rect.Width = widthPixels;
                         rect.Height = 1 / (maxPitch - minPitch + 1) * horizontalLineHeight;
                         rect.Fill = System.Windows.Media.Brushes.Green;
                         rect.Stroke = System.Windows.Media.Brushes.Black;

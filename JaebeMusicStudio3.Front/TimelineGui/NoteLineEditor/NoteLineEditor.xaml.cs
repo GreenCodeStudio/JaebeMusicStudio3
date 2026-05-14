@@ -78,6 +78,7 @@ public partial class NoteLineEditor : UserControl
                 item.InvokeChanged();
             }
         };
+        InstrumentSelect.Items.Add("Empty");
         foreach (var x in AudioMixer.Current.Nodes.Where(n => n is Instrument))
         {
             InstrumentSelect.Items.Add(x);

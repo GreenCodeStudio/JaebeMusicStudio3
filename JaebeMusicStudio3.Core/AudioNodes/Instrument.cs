@@ -42,6 +42,7 @@ public class Instrument : IAudioNode
         public double Pitch { get; set; }
         public double Start { get; set; }
         public double Length { get; set; }
+        public double Volume { get; set; }
     }
 
     public async Task<Dictionary<string, object>> Render(RenderingChunk chunk, Dictionary<string, object> inputs)
@@ -61,6 +62,7 @@ public class Instrument : IAudioNode
                     Pitch = y.Pitch,
                     Start = y.Start * 60 / x.Tempo + x.OffsetSeconds,
                     Length = y.Length * 60 / x.Tempo,
+                    Volume = y.Volume
                 })));
             }
         }
@@ -76,6 +78,7 @@ public class Instrument : IAudioNode
                         Pitch = y.Pitch,
                         Start = y.Start,
                         Length = y.Length,
+                        Volume = y.Volume
                     }));
                 }
             }
@@ -83,6 +86,7 @@ public class Instrument : IAudioNode
 
         var chunkStartSeconds = chunk.Start / (double)chunk.Process.SampleRate;
         var chunkLengthSeconds = chunk.Length / (double)chunk.Process.SampleRate;
+        var tasks = new List<(Task<SingleChannelAudioBuffer>, int)>();
         foreach (var note in notes)
         {
             var startOffset = note.Start - chunkStartSeconds;
@@ -91,72 +95,85 @@ public class Instrument : IAudioNode
             {
                 var i = startOffset < 0 ? 0 : (int)(startOffset * chunk.Process.SampleRate);
                 var offset = startOffset > 0 ? 0 : (int)(-startOffset * chunk.Process.SampleRate);
-                var length = (int)(chunkLengthSeconds * chunk.Process.SampleRate);
-                if (length > chunk.Length)
-                    length = (int)chunk.Length;
-                if (i < length)
+                var length = (int)(note.Length * chunk.Process.SampleRate);
+                if (length + i > chunk.Length)
+                    length = (int)chunk.Length - i;
+                if (length>0)
                 {
-                    
-                    var initialization = new TaskCompletionSource();
-                    var subChunk = new RenderingChunk()
+                    var task = Task.Run(async () =>
                     {
-                        Start = offset,
-                        Length = length-i,
-                        Process = chunk.Process
-                    };
-                    foreach (var node in _nodes)
-                    {
-                        subChunk.Responses[node] = Task.Run(async () =>
+                        var initialization = new TaskCompletionSource();
+                        var subChunk = new RenderingChunk()
                         {
-                            await initialization.Task;
-                            var inputs = new Dictionary<string, object>();
-                            foreach (var input in node.Inputs)
+                            Start = offset,
+                            Length = length,
+                            Process = chunk.Process
+                        };
+                        foreach (var node in _nodes)
+                        {
+                            subChunk.Responses[node] = Task.Run(async () =>
                             {
-                                if (_connections.TryGetValue(input, out NodeOutputDefinition output))
+                                await initialization.Task;
+                                var inputs = new Dictionary<string, object>();
+                                foreach (var input in node.Inputs)
                                 {
-                                    if ((await subChunk.Responses[output.Node]).TryGetValue(output.Name,
-                                            out object value))
+                                    if (_connections.TryGetValue(input, out NodeOutputDefinition output))
                                     {
-                                        inputs[input.Name] = value;
+                                        if ((await subChunk.Responses[output.Node]).TryGetValue(output.Name,
+                                                out object value))
+                                        {
+                                            inputs[input.Name] = value;
+                                        }
+                                    }
+                                    else if (input.Type == NodeConnectionType.Note)
+                                    {
+                                        inputs[input.Name] = new Note()
+                                        {
+                                            Pitch = note.Pitch,
+                                            Start = 0,
+                                            Length = note.Length,
+                                            Volume = note.Volume
+                                        };
                                     }
                                 }
-                                else if (input.Type == NodeConnectionType.Note)
-                                {
-                                    inputs[input.Name] = new Note()
-                                    {
-                                        Pitch = note.Pitch,
-                                        Start = 0,
-                                        Length = note.Length
-                                    };
-                                }
-                            }
 
-                            return await node.Render(subChunk, inputs);
-                        });
-                    }
-
-                    initialization.SetResult();
-                    var responseMain = await subChunk.Responses[MainOutput.Node];
-                    if (responseMain.TryGetValue(MainOutput.Name, out object valueMain))
-                    {
-                        var mainBuffer = valueMain as SingleChannelAudioBuffer;
-                        if (length < output.Data.Length || length < mainBuffer.Data.Length + i)
-                        {
-                            throw new Exception("");
+                                return await node.Render(subChunk, inputs);
+                            });
                         }
 
-                        try
+                        initialization.SetResult();
+                        var responseMain = await subChunk.Responses[MainOutput.Node];
+                        if (responseMain.TryGetValue(MainOutput.Name, out object valueMain))
                         {
-                            for (var j = 0; j < length-i; j++)
+                            var mainBuffer = valueMain as SingleChannelAudioBuffer;
+                            if (length + i > output.Data.Length || length > mainBuffer.Data.Length)
                             {
-                                output.Data[j+i] += mainBuffer.Data[ j];
+                                throw new Exception("");
                             }
-                        }catch
-                        {
-                            throw new Exception("");
+
+                            try
+                            {
+                                return mainBuffer;
+                            }
+                            catch
+                            {
+                                throw new Exception("");
+                            }
                         }
-                    }
+
+                        return null;
+                    });
+                    tasks.Add((task, i));
                 }
+            }
+        }
+
+        foreach (var (task,i) in tasks)
+        {
+            var buffer = await task;
+            for (var j = 0; j < buffer.Data.Length; j++)
+            {
+                output.Data[j + i] += buffer.Data[j];
             }
         }
 

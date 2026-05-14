@@ -31,7 +31,7 @@ public partial class MainWindow : Window
 
     static MainWindow()
     {
-        output = new WasapiOut(AudioClientShareMode.Shared, 0);
+        output = new WasapiOut(AudioClientShareMode.Shared, 10);
         IOWrapper.Add(KeyboardInput.singleton1);
         IOWrapper.Add(KeyboardInput.singleton2);
     }

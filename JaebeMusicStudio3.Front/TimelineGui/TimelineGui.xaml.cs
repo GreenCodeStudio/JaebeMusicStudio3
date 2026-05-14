@@ -17,6 +17,7 @@ public partial class TimelineGui : UserControl, ITabbableControl
     private double HorizontalLineHeight = 100.0;
     private ITimelineItem _movingNode = null;
     private Point? _movingPoint = null;
+    private ITimelineItem _selectedNode;
 
     public TimelineGui(Timeline timeline)
     {
@@ -58,6 +59,25 @@ public partial class TimelineGui : UserControl, ITabbableControl
         {
             _movingNode = null;
             _movingPoint = null;
+        };
+        KeyDown += (sender, args) =>
+        {
+            if (args.Key == Key.Delete)
+            {
+                if(_selectedNode != null)
+                {
+                    timeline.Remove(_selectedNode);
+                    _selectedNode = null;
+                }
+            }
+        };
+        MouseDown += (sender, args) =>
+        {
+            if (_selectedNode != null && !args.Handled)
+            {
+                _selectedNode = null;
+                Render();
+            }
         };
     }
 
@@ -138,9 +158,25 @@ public partial class TimelineGui : UserControl, ITabbableControl
             control.VerticalAlignment = VerticalAlignment.Top;
             control.MouseDown += (sender, args) =>
             {
-                _movingNode = item;
-                _movingPoint = args.MouseDevice.GetPosition(this);
+                if (_selectedNode == item)
+                {
+                    _movingNode = item;
+                    _movingPoint = args.MouseDevice.GetPosition(this);
+                    args.Handled = true;
+                }
+                else
+                {
+                    _selectedNode = item;
+                    args.Handled = true;
+                    Render();
+                }
             };
+            if (_selectedNode == item)
+            {
+                control.BorderBrush = Brushes.Red;
+                control.BorderThickness = new Thickness(2);
+            }
+
             Lines.Children.Add(control);
             item.Changed -= OnItemChanged;
             item.Changed += OnItemChanged;
