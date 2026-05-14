@@ -4,6 +4,11 @@
              xmlns:local="clr-namespace:JaebeMusicStudio3.Front"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style TargetType="Button">
+            <Setter Property="Foreground" Value="#000000"/>
+            <Setter Property="Background" Value="#cccccc"/>
+            <Setter Property="Padding" Value="10 6"/>
+        </Style>
     </Application.Resources>
+
 </Application>

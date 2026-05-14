@@ -17,11 +17,11 @@ public partial class NanoSoundAnalyzer : UserControl
 
     public NodeOutputDefinition NodeOutputDefinition { get; set; }
 
-    private void ChunkCreated(RenderingChunk chunk)
+    private async void ChunkCreated(RenderingChunk chunk)
     {
         try
         {
-            var response = chunk.GetResponse(NodeOutputDefinition).Result;
+            var response = await chunk.GetResponse(NodeOutputDefinition);
 
             Task.Run(() =>
             {

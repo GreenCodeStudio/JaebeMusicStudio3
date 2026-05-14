@@ -96,6 +96,8 @@ public class Instrument : IAudioNode
                     length = (int)chunk.Length;
                 if (i < length)
                 {
+                    
+                    var initialization = new TaskCompletionSource();
                     var subChunk = new RenderingChunk()
                     {
                         Start = offset,
@@ -106,6 +108,7 @@ public class Instrument : IAudioNode
                     {
                         subChunk.Responses[node] = Task.Run(async () =>
                         {
+                            await initialization.Task;
                             var inputs = new Dictionary<string, object>();
                             foreach (var input in node.Inputs)
                             {
@@ -132,6 +135,7 @@ public class Instrument : IAudioNode
                         });
                     }
 
+                    initialization.SetResult();
                     var responseMain = await subChunk.Responses[MainOutput.Node];
                     if (responseMain.TryGetValue(MainOutput.Name, out object valueMain))
                     {

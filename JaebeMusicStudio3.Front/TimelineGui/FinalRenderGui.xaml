@@ -7,6 +7,7 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <Label Name="Status"></Label>
+        <Label Name="Status" VerticalAlignment="Top" Margin="00,54,0,0"></Label>
+        <ProgressBar Name="progress" VerticalAlignment="Top" Height="50"></ProgressBar>
     </Grid>
 </UserControl>

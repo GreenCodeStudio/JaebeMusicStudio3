@@ -128,6 +128,11 @@ public partial class TimelineGui : UserControl, ITabbableControl
 
             control.HorizontalAlignment = HorizontalAlignment.Left;
             control.Width = length / SecondsPerPixel;
+            if (control.Width < 16)
+            {
+                control.Width = 16;
+            }
+
             control.Height = HorizontalLineHeight;
             control.HorizontalAlignment = HorizontalAlignment.Left;
             control.VerticalAlignment = VerticalAlignment.Top;

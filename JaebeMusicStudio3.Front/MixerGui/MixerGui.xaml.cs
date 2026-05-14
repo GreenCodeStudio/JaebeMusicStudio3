@@ -11,7 +11,7 @@ public partial class MixerGui : UserControl
     public MixerGui(AudioMixer mixer)
     {
         this.Mixer = mixer;
-        InitializeComponent();      
+        InitializeComponent();
         this.AllowDrop = true;
         Drop += OnDrop;
         Render();
@@ -47,6 +47,19 @@ public partial class MixerGui : UserControl
             Mixer.Add(node);
         };
         add.Items.Add(overdrive);
+
+
+        var instrument = new MenuItem();
+        instrument.Header = "Instrument";
+        instrument.Click += (s, e) =>
+        {
+            var node = new Instrument();
+            var nodeMixer = new MixNode();
+            node.Add(nodeMixer);
+            node.MainOutput = nodeMixer.Outputs.First();
+            Mixer.Add(node);
+        };
+        add.Items.Add(instrument);
 
         this.MouseMove += (sender, args) =>
         {
@@ -88,10 +101,11 @@ public partial class MixerGui : UserControl
             {
                 nodeGui.BorderBrush = System.Windows.Media.Brushes.Red;
                 nodeGui.BorderThickness = new System.Windows.Thickness(2);
-                nodeGui.Margin = new System.Windows.Thickness(pos.X-2, pos.Y-2, 0, 0);
+                nodeGui.Margin = new System.Windows.Thickness(pos.X - 2, pos.Y - 2, 0, 0);
                 nodeGui.Width += 4;
                 nodeGui.Height += 4;
             }
+
             nodeGui.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
             nodeGui.VerticalAlignment = System.Windows.VerticalAlignment.Top;
             Plane.Children.Add(nodeGui);
@@ -153,7 +167,8 @@ public partial class MixerGui : UserControl
             line.Y2 = lineEndNode.Margin.Top + 40 + 30 * endIndex;
             Plane.Children.Add(line);
         }
-    }   
+    }
+
     private void OnDrop(object sender, DragEventArgs e)
     {
         var fileNames = e.Data.GetData("FileDrop");

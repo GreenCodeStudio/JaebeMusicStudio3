@@ -74,6 +74,7 @@ public class KeyboardInput : INotesInput
     {
         this.type = type;
         this.thread = new Thread(() => { System.Windows.Threading.Dispatcher.Run(); });
+        thread.Name = "KeyboardInputThread";
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
     }
