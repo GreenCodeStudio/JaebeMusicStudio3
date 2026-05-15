@@ -29,13 +29,14 @@ public partial class TabView : UserControl, ITabbableControl
 
         foreach (Grid x in TabsWrapper.Children)
         {
-            x.Children.OfType<Rectangle>().First().Opacity = 0;
+            x.Tag = false;
         }
 
         var tab = new Grid();
         tab.Margin = new Thickness(4, 4, 4, -2);
         var rectangle = new System.Windows.Shapes.Rectangle();
         rectangle.Fill = System.Windows.Media.Brushes.White;
+        tab.Tag = true;
         tab.Children.Add(rectangle);
         var inside = new StackPanel();
         tab.Children.Add(inside);
@@ -78,10 +79,10 @@ title.Margin = new Thickness(4, 0, 4, 4);
             _selectedContent = content;
             foreach (Grid x in TabsWrapper.Children)
             {
-                x.Children.OfType<Rectangle>().First().Opacity = 0;
+                x.Tag = false;
             }
 
-            rectangle.Opacity = 1;
+             tab.Tag = true;
             foreach (UserControl child in ContentWrapper.Children)
             {
                 child.Visibility = child == content ? Visibility.Visible : Visibility.Collapsed;

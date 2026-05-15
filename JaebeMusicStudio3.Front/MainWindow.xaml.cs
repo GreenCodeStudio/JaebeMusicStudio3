@@ -39,6 +39,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Tabs.Children.Add(new TabView(() => new Welcome()));
         var thread = new Thread(LiveRenderThread);
         thread.Name = "LiveRenderThread";
         thread.Start();

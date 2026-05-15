@@ -21,7 +21,21 @@
             <Button Click="ShowMenu">Menu</Button>
             <ScrollViewer Grid.Row="0" Grid.Column="1">
                 <Grid>
-                    <StackPanel Name="TabsWrapper" Orientation="Horizontal"></StackPanel>
+                    <StackPanel Name="TabsWrapper" Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <Style TargetType="Rectangle">
+                                <Setter Property="Opacity" Value="0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver}" Value="True">
+                                        <Setter Property="Opacity" Value="0.5"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=Tag}" Value="True">
+                                        <Setter Property="Opacity" Value="1"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Resources>
+                    </StackPanel>
                 </Grid>
             </ScrollViewer>
         </Grid>

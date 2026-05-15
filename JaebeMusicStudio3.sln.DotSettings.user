@@ -68,4 +68,7 @@
   &lt;Assembly Path="C:\Users\matri\.nuget\packages\naudio\2.3.0\lib\net6.0\NAudio.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\matri\.nuget\packages\naudio.core\2.3.0\lib\netstandard2.0\NAudio.Core.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\matri\.nuget\packages\naudio.midi\2.3.0\lib\netstandard2.0\NAudio.Midi.dll" /&gt;&#xD;
-&lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>
+&lt;/AssemblyExplorer&gt;</s:String>
+	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=JaebeMusicStudio3_002EInstaller_002FAppFiles/@EntryIndexedValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=JaebeMusicStudio3_002EInstaller_002FAppFiles/@EntryIndexRemoved">True</s:Boolean>
+	<s:Boolean x:Key="/Default/ResxEditorPersonal/Initialized/@EntryValue">True</s:Boolean></wpf:ResourceDictionary>

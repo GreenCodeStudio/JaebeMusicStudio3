@@ -6,12 +6,12 @@
         xmlns:local="clr-namespace:JaebeMusicStudio3.Front"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-<StackPanel>
-    
-    <ComboBox VerticalAlignment="Top" Name="OutputSelect"></ComboBox>
-    <ComboBox VerticalAlignment="Top" Name="QualitySelect"></ComboBox>
-    <Grid></Grid>
-</StackPanel>
+    <Grid  Background="#ddd">
+        <StackPanel>
+
+            <ComboBox VerticalAlignment="Top" Name="OutputSelect"></ComboBox>
+            <ComboBox VerticalAlignment="Top" Name="QualitySelect"></ComboBox>
+            <Grid x:Name="Tabs"></Grid>
+        </StackPanel>
     </Grid>
 </Window>
