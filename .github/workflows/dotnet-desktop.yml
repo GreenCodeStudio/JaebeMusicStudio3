@@ -46,7 +46,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Installer
-        path: JaebeMusicStudio3.Installer\bin\Release\net10.0-windows\publish
+        path: JaebeMusicStudio3.Installer\bin\Release\net10.0-windows\win-x64\publish\JaebeMusicStudio3.Installer.exe
 
     - name: Test
       uses: actions/upload-artifact@v4
