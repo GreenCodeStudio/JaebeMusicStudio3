@@ -57,7 +57,7 @@
             RunButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             RunButton.Location = new Point(3, 0);
             RunButton.Name = "RunButton";
-            RunButton.Size = new Size(379, 362);
+            RunButton.Size = new Size(463, 362);
             RunButton.TabIndex = 2;
             RunButton.Text = "Run portable";
             RunButton.UseVisualStyleBackColor = true;
@@ -68,7 +68,7 @@
             Path.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             Path.Location = new Point(10, 16);
             Path.Name = "Path";
-            Path.Size = new Size(383, 31);
+            Path.Size = new Size(468, 31);
             Path.TabIndex = 3;
             // 
             // InstallButton
@@ -76,7 +76,7 @@
             InstallButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             InstallButton.Location = new Point(3, 325);
             InstallButton.Name = "InstallButton";
-            InstallButton.Size = new Size(390, 34);
+            InstallButton.Size = new Size(494, 34);
             InstallButton.TabIndex = 4;
             InstallButton.Text = "Install";
             InstallButton.UseVisualStyleBackColor = true;
@@ -96,8 +96,8 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(RunButton);
-            splitContainer1.Size = new Size(785, 362);
-            splitContainer1.SplitterDistance = 396;
+            splitContainer1.Size = new Size(954, 362);
+            splitContainer1.SplitterDistance = 500;
             splitContainer1.TabIndex = 5;
             // 
             // Form1
@@ -105,7 +105,7 @@
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
-            ClientSize = new Size(809, 434);
+            ClientSize = new Size(978, 434);
             Controls.Add(splitContainer1);
             Controls.Add(Header);
             Name = "Form1";
