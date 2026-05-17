@@ -26,6 +26,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+        
+      - name: set version
+        run:  [xml]$a= Get-Content .\JaebeMusicStudio3.Installer\JaebeMusicStudio3.Installer.csproj;$b=$a.CreateElement("AssemblyVersion");$b.AppendChild($a.CreateTextNode("zz"));$a.GetElementsByTagName("PropertyGroup")[0].AppendChild($b);$a.Save(".\JaebeMusicStudio3.Installer\JaebeMusicStudio3.Installer.csproj");
 
       - name: Build main
         run: cd JaebeMusicStudio3.Front; dotnet publish
