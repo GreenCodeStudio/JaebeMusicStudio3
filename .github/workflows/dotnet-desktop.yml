@@ -40,7 +40,7 @@ jobs:
       run: rm JaebeMusicStudio3.Installer\Files.zip; Compress-Archive JaebeMusicStudio3.Front\bin\Release\net9.0-windows\publish\* JaebeMusicStudio3.Installer\Files.zip
 
     - name: Build installer
-      run: cd JaebeMusicStudio3.Installer; dotnet publish -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=true -c Release -r win-x64 --self-contained true
+      run: cd JaebeMusicStudio3.Installer; dotnet publish -p:PublishSingleFile=true -p:PublishReadyToRun=true -c Release -r win-x64 --self-contained true
       
     - name: Upload installer
       uses: actions/upload-artifact@v4
