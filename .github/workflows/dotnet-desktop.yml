@@ -13,9 +13,9 @@ jobs:
     strategy:
       matrix:
         configuration: [Release]
-
+        
+    runs-on: 
     
-
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -37,9 +37,7 @@ jobs:
         path: JaebeMusicStudio3.Front\bin\Release\net9.0-windows\publish
 
     - name: Generate ZIP
-      uses: byteever/action-build-zip@master
-      with:
-        filename: 'Files.zip'
+      run: rm JaebeMusicStudio3.Installer\Files.zip; Compress-Archive JaebeMusicStudio3.Front\bin\Release\net9.0-windows\publish JaebeMusicStudio3.Installer\Files.zip
 
     - name: Test
       uses: actions/upload-artifact@v4
