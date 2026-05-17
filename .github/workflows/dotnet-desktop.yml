@@ -50,15 +50,3 @@ jobs:
         name: Installer
         path: JaebeMusicStudio3.Installer\bin\Release\net10.0-windows\win-x64\publish\JaebeMusicStudio3.Installer.exe
  
-  release:
-    needs: build
-    on:
-      push:
-        tags:
-          - 'v*'
-    runs-on: windows-latest
-    steps:
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: Installer
