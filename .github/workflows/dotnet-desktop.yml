@@ -12,12 +12,9 @@ jobs:
 
     strategy:
       matrix:
-        configuration: [Debug, Release]
+        configuration: [Release]
 
-    runs-on: windows-latest  
-
-    env:
-      Solution_Name: your-solution-name                         # Replace with your solution name, i.e. MyWpfApp.sln.
+    
 
     steps:
     - name: Checkout
@@ -37,6 +34,17 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Zip
+        path: JaebeMusicStudio3.Front\bin\Release\net9.0-windows\publish
+
+    - name: Generate ZIP
+      uses: byteever/action-build-zip@master
+      with:
+        filename: 'Files.zip'
+
+    - name: Test
+      uses: actions/upload-artifact@v4
+      with:
+        name: test
         path: .
 
     - name: Build installer
