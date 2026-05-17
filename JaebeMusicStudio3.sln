@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11806.211
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JaebeMusicStudio3.Front", "JaebeMusicStudio3.Front\JaebeMusicStudio3.Front.csproj", "{CDC6DF72-663E-4F3D-B49F-4B24A2570CE4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JaebeMusicStudio3.Core", "JaebeMusicStudio3.Core\JaebeMusicStudio3.Core.csproj", "{5792DF2A-0D78-4303-B770-C2232521C70C}"
@@ -8,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VstHost", "VstHost\VstHost.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JaebeMusicStudio3.VstHost", "JaebeMusicStudio3.VstHost\JaebeMusicStudio3.VstHost.csproj", "{2F624BF1-0804-452B-9019-81F10CC272CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JaebeMusicStudio3.Installer", "JaebeMusicStudio3.Installer\JaebeMusicStudio3.Installer.csproj", "{F6514A3D-E9C0-403D-B8A5-7EBA2CB2231E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JaebeMusicStudio3.Installer", "JaebeMusicStudio3.Installer\JaebeMusicStudio3.Installer.csproj", "{83630212-44E6-4A2B-ABD0-9DCDD0994AA9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,17 +27,23 @@ Global
 		{5792DF2A-0D78-4303-B770-C2232521C70C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5792DF2A-0D78-4303-B770-C2232521C70C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5792DF2A-0D78-4303-B770-C2232521C70C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48905DA7-3786-477A-8823-4961182C751B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48905DA7-3786-477A-8823-4961182C751B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{48905DA7-3786-477A-8823-4961182C751B}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{48905DA7-3786-477A-8823-4961182C751B}.Debug|Any CPU.Build.0 = Debug|x86
-		{2F624BF1-0804-452B-9019-81F10CC272CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2F624BF1-0804-452B-9019-81F10CC272CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48905DA7-3786-477A-8823-4961182C751B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48905DA7-3786-477A-8823-4961182C751B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F624BF1-0804-452B-9019-81F10CC272CF}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{2F624BF1-0804-452B-9019-81F10CC272CF}.Debug|Any CPU.Build.0 = Debug|x64
-		{F6514A3D-E9C0-403D-B8A5-7EBA2CB2231E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6514A3D-E9C0-403D-B8A5-7EBA2CB2231E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6514A3D-E9C0-403D-B8A5-7EBA2CB2231E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6514A3D-E9C0-403D-B8A5-7EBA2CB2231E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F624BF1-0804-452B-9019-81F10CC272CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F624BF1-0804-452B-9019-81F10CC272CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83630212-44E6-4A2B-ABD0-9DCDD0994AA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83630212-44E6-4A2B-ABD0-9DCDD0994AA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83630212-44E6-4A2B-ABD0-9DCDD0994AA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83630212-44E6-4A2B-ABD0-9DCDD0994AA9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {405B7544-B1EB-4001-A03F-329D14DA11A2}
 	EndGlobalSection
 EndGlobal
