@@ -38,4 +38,9 @@ public partial class MainWindow : Window
         }
         zip.ExtractToDirectory(Path.Text);
     }
+
+    private void Run(object sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
 }

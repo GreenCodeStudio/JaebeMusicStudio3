@@ -9,13 +9,22 @@
     <Grid>
         <ScrollViewer>
             <Grid>
-                <StackPanel>
-                    <Label HorizontalContentAlignment="Center">Jaebe Music Studio Installer</Label>
-                    <StackPanel>
-                        <TextBox Name="Path"></TextBox>
-                    </StackPanel>
-                    <Button Click="Install">Install</Button>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"  />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label HorizontalContentAlignment="Center" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" FontSize="24" >Jaebe Music Studio Installer</Label>
+                <StackPanel  Grid.Row="1" Margin="4">
+                    <TextBox Name="Path"></TextBox>
                 </StackPanel>
+                <Button Click="Install"  Grid.Row="3" Margin="4">Install</Button>
+                <Button Click="Run"  Grid.Row="1" Grid.RowSpan="3" Grid.Column="1" Margin="4">Run portable</Button>
             </Grid>
         </ScrollViewer>
     </Grid>
