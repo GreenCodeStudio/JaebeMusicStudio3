@@ -1,4 +1,4 @@
-﻿name: .NET Core Desktop
+﻿name: Release
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
           dotnet-version: 10.0.x
         
       - name: set version
-        run:  "[xml]$a= Get-Content .\JaebeMusicStudio3.Installer\JaebeMusicStudio3.Installer.csproj;$b=$a.CreateElement('AssemblyVersion');$b.AppendChild($a.CreateTextNode('${{ github.ref }}'));$a.GetElementsByTagName('PropertyGroup')[0].AppendChild($b);$a.Save('.\JaebeMusicStudio3.Installer\JaebeMusicStudio3.Installer.csproj');"
+        run:  pwsh .\setVersion.ps1 ${{ github.ref }}
 
       - name: Build main
         run: cd JaebeMusicStudio3.Front; dotnet publish
