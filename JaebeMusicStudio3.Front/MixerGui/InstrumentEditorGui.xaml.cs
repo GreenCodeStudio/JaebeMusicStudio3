@@ -15,37 +15,7 @@ public partial class InstrumentEditorGui : UserControl
         InitializeComponent();
         Render();
         instrument.Changed += () => { Dispatcher.Invoke(() => Render()); };
-        var contextMenu = new ContextMenu();
-        this.ContextMenu = contextMenu;
-        var add = new MenuItem();
-        add.Header = "Add";
-        contextMenu.Items.Add(add);
-
-        var mix = new MenuItem();
-        mix.Header = "Mix";
-        mix.Click += (s, e) =>
-        {
-            var node = new MixNode();
-            Instrument.Add(node);
-        };
-        add.Items.Add(mix);
-
-        var basicOscilator = new MenuItem();
-        basicOscilator.Header = "Basic oscilator";
-        basicOscilator.Click += (s, e) =>
-        {
-            var node = new BasicOscillatorNode();
-            Instrument.Add(node);
-        };
-        add.Items.Add(basicOscilator);
-        var overdrive = new MenuItem();
-        overdrive.Header = "Overdrive";
-        overdrive.Click += (s, e) =>
-        {
-            var node = new OverdriveNode();
-            Instrument.Add(node);
-        };
-        add.Items.Add(overdrive);
+        GenerateContextMenu();
 
         this.MouseMove += (sender, args) =>
         {
@@ -70,8 +40,39 @@ public partial class InstrumentEditorGui : UserControl
             var translation = new TranslateTransform(-mousePos.X, -mousePos.Y);
             var translationReverse = new TranslateTransform(+mousePos.X, +mousePos.Y);
             var scale = new System.Windows.Media.ScaleTransform(scaleValue, scaleValue);
-            Plane.RenderTransform = new MatrixTransform(Plane.RenderTransform.Value * translation.Value * scale.Value * translationReverse.Value);
+            Plane.RenderTransform = new MatrixTransform(Plane.RenderTransform.Value * translation.Value * scale.Value *
+                                                        translationReverse.Value);
         };
+    }
+
+    private void GenerateContextMenu()
+    {
+        var nodes = new (string, Func<IAudioNode>)[]
+        {
+            ("Mix", () => new MixNode()),
+            ("Basic oscilator", () => new BasicOscillatorNode()),
+            ("Overdrive", () => new OverdriveNode()),
+            ("Note modification", () => new NoteModificationNode()),
+            ("Note gate", () => new NoteGateNode()),
+            ("Noise", () => new Noise()),
+        };
+        var contextMenu = new ContextMenu();
+        this.ContextMenu = contextMenu;
+        var add = new MenuItem();
+        add.Header = "Add";
+        contextMenu.Items.Add(add);
+
+        foreach (var node in nodes)
+        {
+            var item = new MenuItem();
+            item.Header = node.Item1;
+            item.Click += (s, e) =>
+            {
+                var n = node.Item2();
+                Instrument.Add(n);
+            };
+            add.Items.Add(item);
+        }
     }
 
     public Instrument Instrument { get; set; }

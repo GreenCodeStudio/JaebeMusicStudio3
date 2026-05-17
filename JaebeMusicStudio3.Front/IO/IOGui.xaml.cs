@@ -9,7 +9,13 @@ public partial class IOGui : UserControl
     {
         InitializeComponent();
         Render();
-        IOWrapper.Changed += Render;
+        IOWrapper.Changed += ()=>
+        {
+            Dispatcher.Invoke(() =>
+            {
+                Render();
+            });
+        };
     }
 
     private void Render()

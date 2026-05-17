@@ -12,6 +12,10 @@ public class RenderingChunk
 
     public async Task<object> GetResponse(NodeOutputDefinition x)
     {
+        if (x.Node == null)
+        {
+            throw new NullReferenceException();
+        }
         if (Responses.TryGetValue(x.Node, out var response))
         {
             return (await response)[x.Name];

@@ -61,4 +61,5 @@ public class OverdriveNode : IAudioNode
     }
 
     public string Title => "Overdrive";
+    public string Name { get; set; }
 }

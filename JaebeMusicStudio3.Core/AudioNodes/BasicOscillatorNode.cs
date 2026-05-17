@@ -44,33 +44,36 @@ public class BasicOscillatorNode : IAudioNode
         var output = new SingleChannelAudioBuffer(chunk.Process.SampleRate, chunk.Length);
         if (inputs.TryGetValue("note", out var note))
         {
-            var noteNote = note as Note;
-            var volumeFloat = (float)noteNote.Volume;
-            if (Shape == WaveShape.Sine)
+            if (note != null)
             {
-                for (var i = 0; i < chunk.Length; i++)
+                var noteNote = note as Note;
+                var volumeFloat = (float)noteNote.Volume;
+                if (Shape == WaveShape.Sine)
                 {
-                    var secondsOffset = ((float)i + chunk.Start) / chunk.Process.SampleRate;
-                    output.Data[i] += MathF.Sin(secondsOffset * (float)noteNote.Pitch * 2 * MathF.PI) * volumeFloat;
+                    for (var i = 0; i < chunk.Length; i++)
+                    {
+                        var secondsOffset = ((float)i + chunk.Start) / chunk.Process.SampleRate;
+                        output.Data[i] += MathF.Sin(secondsOffset * (float)noteNote.Pitch * 2 * MathF.PI) * volumeFloat;
+                    }
                 }
-            }
-            else if (Shape == WaveShape.Square)
-            {
-                for (var i = 0; i < chunk.Length; i++)
+                else if (Shape == WaveShape.Square)
                 {
-                    var secondsOffset = ((float)i + chunk.Start) / chunk.Process.SampleRate;
-                    output.Data[i] += (secondsOffset * noteNote.Pitch) % 1.0f > 0.5 ? volumeFloat : -volumeFloat;
+                    for (var i = 0; i < chunk.Length; i++)
+                    {
+                        var secondsOffset = ((float)i + chunk.Start) / chunk.Process.SampleRate;
+                        output.Data[i] += (secondsOffset * noteNote.Pitch) % 1.0f > 0.5 ? volumeFloat : -volumeFloat;
+                    }
                 }
-            }
-            else if (Shape == WaveShape.Triangle)
-            {
-            }
-            else if (Shape == WaveShape.Sawtooth)
-            {
-                for (var i = 0; i < chunk.Length; i++)
+                else if (Shape == WaveShape.Triangle)
                 {
-                    var secondsOffset = ((float)i + chunk.Start) / chunk.Process.SampleRate;
-                    output.Data[i] += (float)((secondsOffset * noteNote.Pitch) % 1.0f) * 0.2f - 0.1f;
+                }
+                else if (Shape == WaveShape.Sawtooth)
+                {
+                    for (var i = 0; i < chunk.Length; i++)
+                    {
+                        var secondsOffset = ((float)i + chunk.Start) / chunk.Process.SampleRate;
+                        output.Data[i] += (float)((secondsOffset * noteNote.Pitch) % 1.0f) * 0.2f - 0.1f;
+                    }
                 }
             }
         }
@@ -84,4 +87,5 @@ public class BasicOscillatorNode : IAudioNode
     }
 
     public string Title => "Basic Oscillator";
+    public  string Name { get; set; }
 }

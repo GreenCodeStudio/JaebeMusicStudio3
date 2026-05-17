@@ -3,7 +3,7 @@ using JaebeMusicStudio3.Core.AudioRendering;
 
 namespace JaebeMusicStudio3.Core.AudioNodes;
 
-public class DummyNoise : IAudioNode
+public class Noise : IAudioNode
 {
     public Guid Id { get; set; }=Guid.NewGuid();
     [JsonIgnore]
@@ -26,14 +26,13 @@ public class DummyNoise : IAudioNode
         var random = new Random();
         for (var i = 0; i < chunk.Length; i++)
         {
-            // var x = (chunk.Start + i) % 256;
-            // buffer.Data[i] = (x<128?1:-1) * 0.01f;
-            var x = (chunk.Start + i) % 256;
-            buffer.Data[i] = MathF.Sin((float)x / 256f * 2f * MathF.PI) * 0.1f;
+            buffer.Data[i] = random.NextSingle() * 2 - 1;
         }
 
         return new Dictionary<string, object>() { { "main", buffer } };
     }
     
     public string Title => "Dummy Noise";
+    
+    public string Name { get; set; }
 }

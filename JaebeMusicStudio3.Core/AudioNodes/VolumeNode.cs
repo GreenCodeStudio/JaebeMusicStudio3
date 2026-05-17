@@ -78,4 +78,5 @@ public class VolumeNode : IAudioNode
     }
 
     public string Title => "Volume";
+    public string Name { get; set; }
 }

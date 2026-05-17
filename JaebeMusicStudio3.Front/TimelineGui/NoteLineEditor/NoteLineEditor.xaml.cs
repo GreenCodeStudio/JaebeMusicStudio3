@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -30,7 +31,7 @@ public partial class NoteLineEditor : UserControl
         {
             if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed && _movingNode != null)
             {
-                var cNoteLog = Math.Log2(440.0) * 12;
+                var cNoteLog = Math.Log2(440.0) * 12 - 9;
                 var deltaX = args.MouseDevice.GetPosition(this).X - _movingPoint.Value.X;
                 var deltaY = args.MouseDevice.GetPosition(this).Y - _movingPoint.Value.Y;
                 var pitchLog = Math.Log2(_movingNode.Pitch) * 12 - cNoteLog;
@@ -65,7 +66,7 @@ public partial class NoteLineEditor : UserControl
             if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed &&
                 (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt)))
             {
-                var cNoteLog = Math.Log2(440.0) * 12;
+                var cNoteLog = Math.Log2(440.0) * 12 - 9;
                 var pitchLog = PitchLog - args.MouseDevice.GetPosition(Plane).Y / PitchNoteHeight;
                 var newNote = new Note
                 {
@@ -83,6 +84,7 @@ public partial class NoteLineEditor : UserControl
         {
             InstrumentSelect.Items.Add(x);
         }
+
         InstrumentSelect.SelectionChanged += (s, e) =>
         {
             if (InstrumentSelect.SelectedItem != null)
@@ -100,7 +102,7 @@ public partial class NoteLineEditor : UserControl
             var multiplier = Math.Pow(1.25, e.Delta / 120.0);
             if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
-                // SecondsPerPixel *= multiplier;
+                BeatsPerPixel *= multiplier;
             }
             else
             {
@@ -111,7 +113,7 @@ public partial class NoteLineEditor : UserControl
         {
             if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
-                // HorizontalScrollBar.Value -= e.Delta * SecondsPerPixel;
+                HorizontalScrollBar.Value -= e.Delta * BeatsPerPixel;
             }
             else
             {
@@ -133,7 +135,7 @@ public partial class NoteLineEditor : UserControl
         var noteName = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
         var noteBlack = new bool[] { false, true, false, true, false, false, true, false, true, false, true, false };
         Pitches.Children.Clear();
-        var cNoteLog = Math.Log2(440.0) * 12;
+        var cNoteLog = Math.Log2(440.0) * 12 - 9;
         var noteLength = ActualHeight / PitchNoteHeight;
         var startLogPitch = Math.Floor(PitchLog - cNoteLog);
         for (var i = startLogPitch; i > startLogPitch - noteLength; i--)
@@ -142,7 +144,7 @@ public partial class NoteLineEditor : UserControl
             if (noteModulo < 0)
                 noteModulo += 12;
             var label = new Label();
-            label.Content = i + " " + (Math.Pow(2, (i + cNoteLog) / 12)) + " " + noteName[noteModulo];
+            label.Content = noteName[noteModulo] + ((int)(i / 12 + 4)) + " " + (Math.Pow(2, (i + cNoteLog) / 12));
             label.Background = noteBlack[noteModulo]
                 ? new SolidColorBrush(Color.FromArgb(255, 200, 200, 200))
                 : new SolidColorBrush(Color.FromArgb(255, 220, 220, 220));
@@ -191,5 +193,10 @@ public partial class NoteLineEditor : UserControl
                 _movingEnd = true;
             };
         }
+    }
+
+    private void ScrollBar_OnScroll(object sender, ScrollEventArgs e)
+    {
+        Render();
     }
 }

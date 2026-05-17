@@ -184,6 +184,7 @@ public class AudioMixer : IJsonOnDeserialized
             kv => _nodes.Find(n => n.Id == kv.Key.NodeId).Inputs.First(i => i.Name == kv.Key.Name),
             kv => _nodes.Find(n => n.Id == kv.Value.NodeId).Outputs.First(i => i.Name == kv.Value.Name)
         );
+        MainOutput = _nodes.Find(n => n.Id == MainOutput.NodeId).Outputs.First(i => i.Name == MainOutput.Name);
     }
 
     public void ReorganizePositions()

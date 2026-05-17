@@ -134,6 +134,7 @@ public partial class MainWindow : Window
         var instrument = new Instrument()
         {
             MainOutput = oscMixer3.Outputs.First(),
+            Name = "Sound"
         };
         instrument.Add(mod2);
         instrument.Add(mod3);
@@ -156,6 +157,32 @@ public partial class MainWindow : Window
         instrument.Connect(oscMixer2.Outputs.First(), oscMixer3.Inputs.Skip(1).First());
         instrument.ReorganizePositions();
         mixer.Add(instrument);
+
+
+        var drums = new Instrument()
+        {
+            MainOutput = oscMixer3.Outputs.First(),
+            Name = "Drums"
+        };
+        var gate = new NoteGateNode();
+        var oscilatorBass = new BasicOscillatorNode()
+        {
+            Shape = BasicOscillatorNode.WaveShape.Square
+        };
+        var oscMixerD = new MixNode();
+        var noise = new Noise();
+        drums.Add(gate);
+        drums.Add(oscilatorBass);
+        drums.Add(oscMixerD);
+        drums.Add(noise);
+        drums.Connect(gate.Outputs.First(), oscilatorBass.Inputs.First());
+        drums.Connect(oscilatorBass.Outputs.First(), oscMixerD.Inputs.First());
+        drums.Connect(noise.Outputs.First(), oscMixerD.Inputs.Skip(1).First());
+        drums.MainOutput = oscMixerD.Outputs.First();
+        drums.ReorganizePositions();
+        mixer.Add(drums);
+
+
         mixer.MainOutput = volume.Outputs.First();
         // mixer.Connect(instrument.MainOutput, volume.Inputs.First());
         mixer.ReorganizePositions();
@@ -181,6 +208,8 @@ public partial class MainWindow : Window
                     () => new IOGui()
                 )
             );
+            
+            MainWindow.provider.Mixer = AudioMixer.Current;
         };
     }
 }

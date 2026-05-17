@@ -8,10 +8,10 @@ using JaebeMusicStudio3.Front.Utils;
 
 namespace JaebeMusicStudio3.Core.AudioNodes;
 
-public class Instrument : IAudioNode
+public class Instrument : IAudioNode, IJsonOnDeserialized
 {
     public Guid Id { get; set; } = Guid.NewGuid();
-
+    [JsonInclude] [JsonPropertyName("Nodes")]
     private List<IAudioNode> _nodes = new List<IAudioNode>();
     public NodeOutputDefinition MainOutput { get; set; }
 
@@ -98,7 +98,7 @@ public class Instrument : IAudioNode
                 var length = (int)(note.Length * chunk.Process.SampleRate);
                 if (length + i > chunk.Length)
                     length = (int)chunk.Length - i;
-                if (length>0)
+                if (length > 0)
                 {
                     var task = Task.Run(async () =>
                     {
@@ -168,7 +168,7 @@ public class Instrument : IAudioNode
             }
         }
 
-        foreach (var (task,i) in tasks)
+        foreach (var (task, i) in tasks)
         {
             var buffer = await task;
             for (var j = 0; j < buffer.Data.Length; j++)
@@ -302,6 +302,7 @@ public class Instrument : IAudioNode
             kv => _nodes.Find(n => n.Id == kv.Key.NodeId).Inputs.First(i => i.Name == kv.Key.Name),
             kv => _nodes.Find(n => n.Id == kv.Value.NodeId).Outputs.First(i => i.Name == kv.Value.Name)
         );
+        MainOutput = _nodes.Find(n => n.Id == MainOutput.NodeId).Outputs.First(i => i.Name == MainOutput.Name);
     }
 
     public event Action Changed;
@@ -330,4 +331,6 @@ public class Instrument : IAudioNode
             });
         }
     }
+
+    public string Name { get; set; }
 }

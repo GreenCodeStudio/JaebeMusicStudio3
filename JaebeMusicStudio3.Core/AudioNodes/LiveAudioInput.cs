@@ -115,4 +115,7 @@ public class LiveAudioInput : IAudioNode
             field = value;
         }
     }=new  WaveFormat(48000, 2);
+    
+    
+    public string Name { get; set; }
 }

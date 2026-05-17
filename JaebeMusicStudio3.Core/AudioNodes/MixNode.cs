@@ -62,4 +62,6 @@ public class MixNode : IAudioNode
     }
 
     public string Title => "Mix";
+    
+    public string Name { get; set; }
 }
