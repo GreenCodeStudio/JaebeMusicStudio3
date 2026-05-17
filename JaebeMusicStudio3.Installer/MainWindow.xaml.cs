@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Windows;
@@ -41,6 +42,16 @@ public partial class MainWindow : Window
 
     private void Run(object sender, RoutedEventArgs e)
     {
-        throw new NotImplementedException();
+        var tmpDir=System.IO.Path.Combine( System.IO.Path.GetTempPath(),Guid.NewGuid().ToString());
+        var uri = new Uri("pack://application:,,,/Files.zip");
+        var stream = Application.GetResourceStream(uri).Stream;
+        var zip = new ZipArchive(stream);
+        var dir = new DirectoryInfo(tmpDir);
+        if (!dir.Exists)
+        {
+            dir.Create();
+        }
+        zip.ExtractToDirectory(tmpDir);
+        Process.Start(System.IO.Path.Combine(tmpDir,"JaebeMusicStudio3.Front.exe"));
     }
 }

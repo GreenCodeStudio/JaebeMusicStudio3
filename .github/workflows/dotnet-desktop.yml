@@ -37,13 +37,19 @@ jobs:
         path: JaebeMusicStudio3.Front\bin\Release\net9.0-windows\publish
 
     - name: Generate ZIP
-      run: rm JaebeMusicStudio3.Installer\Files.zip; Compress-Archive JaebeMusicStudio3.Front\bin\Release\net9.0-windows\publish JaebeMusicStudio3.Installer\Files.zip
+      run: rm JaebeMusicStudio3.Installer\Files.zip; Compress-Archive JaebeMusicStudio3.Front\bin\Release\net9.0-windows\publish\* JaebeMusicStudio3.Installer\Files.zip
+
+    - name: Build installer
+      run: cd JaebeMusicStudio3.Installer; dotnet publish
+      
+    - name: Upload installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: Installer
+        path: JaebeMusicStudio3.Installer\bin\Release\net9.0-windows\publish
 
     - name: Test
       uses: actions/upload-artifact@v4
       with:
         name: test
         path: .
-
-    - name: Build installer
-      run: cd JaebeMusicStudio3.Installer; dotnet publish
