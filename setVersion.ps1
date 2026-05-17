@@ -2,13 +2,13 @@
 
 [xml]$installerCsproj= Get-Content .\JaebeMusicStudio3.Installer\JaebeMusicStudio3.Installer.csproj;
 $installerCsprojVersion=$installerCsproj.CreateElement('AssemblyVersion');
-$installerCsprojVersion.AppendChild($installerCsproj.CreateTextNode(version));
+$installerCsprojVersion.AppendChild($installerCsproj.CreateTextNode($version));
 $installerCsproj.GetElementsByTagName('PropertyGroup')[0].AppendChild($installerCsprojVersion);
 $installerCsproj.Save('.\JaebeMusicStudio3.Installer\JaebeMusicStudio3.Installer.csproj');
 
 [xml]$frontendCsproj= Get-Content .\JaebeMusicStudio3.Front\JaebeMusicStudio3.Front.csproj;
 $frontendCsprojVersion=$frontendCsproj.CreateElement('AssemblyVersion');
-$frontendCsprojVersion.AppendChild($frontendCsproj.CreateTextNode(version));
+$frontendCsprojVersion.AppendChild($frontendCsproj.CreateTextNode($version));
 $frontendCsproj.GetElementsByTagName('PropertyGroup')[0].AppendChild($frontendCsprojVersion);
 $frontendCsproj.Save('.\JaebeMusicStudio3.Front\JaebeMusicStudio3.Front.csproj');
 
