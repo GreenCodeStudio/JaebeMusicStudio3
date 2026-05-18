@@ -9,10 +9,10 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <StackPanel>
-            <controls:LabeledControl2 Title="Volume">
+            <controls:LabeledControl2 Header="Volume">
                 <controls:VolumeSlider Max="10" x:Name="VolumeValueSlider"/>
             </controls:LabeledControl2>
-            <controls:LabeledControl2 Title="Limit">
+            <controls:LabeledControl2 Header="Limit">
                 <controls:VolumeSlider x:Name="LimitSlider"/>
             </controls:LabeledControl2>
         </StackPanel>

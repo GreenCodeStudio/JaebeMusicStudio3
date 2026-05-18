@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:JaebeMusicStudio3.Front.MixerGui"
+             xmlns:controls="clr-namespace:JaebeMusicStudio3.Front.Controls"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -12,6 +13,17 @@
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid Background="#eee" Name="Plane" Grid.Column="0" Margin="4" />
-        <Grid Background="#ddd" Name="PropertiesWrapper" Grid.Column="1" Margin="4" />
+        <ScrollViewer Background="#ddd" Grid.Column="1" Margin="4">
+            <Grid Name="PropertiesWrapper" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <controls:LabeledControl2 Header="Name">
+                    <TextBox Name="PropertyName" TextChanged="PropertyNameChanged"></TextBox>
+                </controls:LabeledControl2>
+                <Grid Grid.Row="1" Name="CustomPropertiesWrapper"></Grid>
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </UserControl>

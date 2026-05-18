@@ -10,13 +10,13 @@ namespace JaebeMusicStudio3.Front.MixerGui;
 public partial class MixerNodeGui : UserControl
 {
     public event Action<NodeInputDefinition, NodeOutputDefinition> Connect;
-    public event Action< NodeOutputDefinition> DisconnectByOutput;
+    public event Action<NodeOutputDefinition> DisconnectByOutput;
     public event Action<NodeInputDefinition> DisconnectByInput;
 
     public MixerNodeGui(IAudioNode node)
     {
         InitializeComponent();
-        Title.Content = node.Title;
+        Title.Content = node.Name + " (" + node.Title + ")";
         foreach (var nodeInputDefinition in node.Inputs)
         {
             var item = new Label();
@@ -25,8 +25,8 @@ public partial class MixerNodeGui : UserControl
             item.AllowDrop = true;
             item.MouseDown += (x, y) =>
             {
-                if(y.LeftButton == MouseButtonState.Pressed)
-                System.Windows.DragDrop.DoDragDrop(item, nodeInputDefinition, System.Windows.DragDropEffects.Move);
+                if (y.LeftButton == MouseButtonState.Pressed)
+                    System.Windows.DragDrop.DoDragDrop(item, nodeInputDefinition, System.Windows.DragDropEffects.Move);
             };
 
             item.Drop += (x, y) =>
@@ -41,10 +41,7 @@ public partial class MixerNodeGui : UserControl
             var contextMenu = new ContextMenu();
             var disconnect = new MenuItem();
             disconnect.Header = "Disconnect";
-            disconnect.Click += (x, y) =>
-            {
-                DisconnectByInput?.Invoke(nodeInputDefinition);
-            };
+            disconnect.Click += (x, y) => { DisconnectByInput?.Invoke(nodeInputDefinition); };
             contextMenu.Items.Add(disconnect);
             item.ContextMenu = contextMenu;
             this.Inputs.Children.Add(item);
@@ -60,8 +57,8 @@ public partial class MixerNodeGui : UserControl
             item.AllowDrop = true;
             item.MouseDown += (x, y) =>
             {
-                if(y.LeftButton == MouseButtonState.Pressed)
-                System.Windows.DragDrop.DoDragDrop(item, nodeOutputDefinition, System.Windows.DragDropEffects.Move);
+                if (y.LeftButton == MouseButtonState.Pressed)
+                    System.Windows.DragDrop.DoDragDrop(item, nodeOutputDefinition, System.Windows.DragDropEffects.Move);
             };
             item.Drop += (x, y) =>
             {
@@ -81,14 +78,11 @@ public partial class MixerNodeGui : UserControl
             contextMenu.Items.Add(soundAnalizer);
             var disconnect = new MenuItem();
             disconnect.Header = "Disconnect";
-            disconnect.Click += (x, y) =>
-            {
-                DisconnectByOutput?.Invoke(nodeOutputDefinition);
-            };
+            disconnect.Click += (x, y) => { DisconnectByOutput?.Invoke(nodeOutputDefinition); };
             contextMenu.Items.Add(disconnect);
             item.ContextMenu = contextMenu;
-            
-            var nanoSoundIndicator=new NanoSoundAnalyzer(nodeOutputDefinition);
+
+            var nanoSoundIndicator = new NanoSoundAnalyzer(nodeOutputDefinition);
             nanoSoundIndicator.HorizontalAlignment = HorizontalAlignment.Right;
             nanoSoundIndicator.VerticalAlignment = VerticalAlignment.Center;
             item.Children.Add(nanoSoundIndicator);

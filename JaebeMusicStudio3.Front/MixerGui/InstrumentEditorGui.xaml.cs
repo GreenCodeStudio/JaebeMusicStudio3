@@ -9,6 +9,10 @@ namespace JaebeMusicStudio3.Front.MixerGui;
 
 public partial class InstrumentEditorGui : UserControl
 {
+    private double Scale = 1.0;
+    private double X = 0.0;
+    private double Y = 0.0;
+
     public InstrumentEditorGui(Instrument instrument)
     {
         this.Instrument = instrument;
@@ -19,13 +23,23 @@ public partial class InstrumentEditorGui : UserControl
 
         this.MouseMove += (sender, args) =>
         {
-            if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed && _movingNode != null)
+            if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
             {
-                var pos = Instrument.GetPosition(_movingNode);
-                pos.X += args.MouseDevice.GetPosition(Plane).X - _movingPoint.Value.X;
-                pos.Y += args.MouseDevice.GetPosition(Plane).Y - _movingPoint.Value.Y;
+                if (_movingNode != null)
+                {
+                    var pos = Instrument.GetPosition(_movingNode);
+                    pos.X += (args.MouseDevice.GetPosition(Plane).X - _movingPoint.Value.X) / Scale;
+                    pos.Y += (args.MouseDevice.GetPosition(Plane).Y - _movingPoint.Value.Y) / Scale;
+                    _movingPoint = args.MouseDevice.GetPosition(Plane);
+                    Instrument.SetPosition(_movingNode, pos);
+                }
+            }
+            else if (args.MiddleButton == System.Windows.Input.MouseButtonState.Pressed)
+            {
+                X += (args.MouseDevice.GetPosition(Plane).X - _movingPoint.Value.X) / Scale;
+                Y += (args.MouseDevice.GetPosition(Plane).Y - _movingPoint.Value.Y) / Scale;
                 _movingPoint = args.MouseDevice.GetPosition(Plane);
-                Instrument.SetPosition(_movingNode, pos);
+                Render();
             }
         };
         this.MouseUp += (sender, args) =>
@@ -37,11 +51,22 @@ public partial class InstrumentEditorGui : UserControl
         {
             var scaleValue = Math.Pow(2, args.Delta / 200.0);
             var mousePos = args.MouseDevice.GetPosition(PlaneWrapper);
-            var translation = new TranslateTransform(-mousePos.X, -mousePos.Y);
-            var translationReverse = new TranslateTransform(+mousePos.X, +mousePos.Y);
-            var scale = new System.Windows.Media.ScaleTransform(scaleValue, scaleValue);
-            Plane.RenderTransform = new MatrixTransform(Plane.RenderTransform.Value * translation.Value * scale.Value *
-                                                        translationReverse.Value);
+            var scaleBefore = Scale;
+            var scaleAfter = Scale * scaleValue;
+            X = mousePos.X / scaleAfter - mousePos.X / scaleBefore + X;
+            Y = mousePos.Y / scaleAfter - mousePos.Y / scaleBefore + Y;
+            Scale = scaleAfter;
+            Render();
+        };
+        MouseDown += (sender, args) =>
+        {
+            _movingPoint = args.MouseDevice.GetPosition(Plane);
+            if (!args.Handled)
+            {
+                _selectedNode = null;
+                PropertiesWrapper.Visibility = Visibility.Collapsed;
+                Render();
+            }
         };
     }
 
@@ -92,12 +117,12 @@ public partial class InstrumentEditorGui : UserControl
             nodeGui.Height = 100;
 
             var pos = Instrument.GetPosition(node);
-            nodeGui.Margin = new System.Windows.Thickness(pos.X, pos.Y, 0, 0);
+            nodeGui.Margin = new System.Windows.Thickness((pos.X + X) * Scale, (pos.Y + Y) * Scale, 0, 0);
             if (node == _selectedNode)
             {
                 nodeGui.BorderBrush = System.Windows.Media.Brushes.Red;
                 nodeGui.BorderThickness = new System.Windows.Thickness(2);
-                nodeGui.Margin = new System.Windows.Thickness(pos.X - 2, pos.Y - 2, 0, 0);
+                nodeGui.Margin = new System.Windows.Thickness((pos.X - 2 + X) * Scale, (pos.Y - 2 + Y) * Scale, 0, 0);
                 nodeGui.Width += 4;
                 nodeGui.Height += 4;
             }
@@ -109,23 +134,22 @@ public partial class InstrumentEditorGui : UserControl
             y += 100;
             nodeGui.MouseDown += (s, e) =>
             {
+                e.Handled = true;
                 _selectedNode = node;
-                PropertiesWrapper.Children.Clear();
+                PropertiesWrapper.Visibility = Visibility.Visible;
+                CustomPropertiesWrapper.Children.Clear();
+                PropertyName.Text = node.Name;
                 var x = GuiFactory.Create(node);
                 if (x != null)
                 {
-                    PropertiesWrapper.Children.Add(x);
+                    CustomPropertiesWrapper.Children.Add(x);
                 }
 
+                _movingNode = node;
+                _movingPoint = e.MouseDevice.GetPosition(Plane);
                 Render();
             };
             nodeGui.ContextMenu = new ContextMenu();
-
-            nodeGui.MouseDown += (sender, args) =>
-            {
-                _movingNode = node;
-                _movingPoint = args.MouseDevice.GetPosition(Plane);
-            };
 
             nodeGui.MouseUp += (sender, args) =>
             {
@@ -147,6 +171,7 @@ public partial class InstrumentEditorGui : UserControl
                     Instrument.Disconnect(keyValuePair);
                 }
             };
+            nodeGui.RenderTransform = new ScaleTransform(Scale, Scale);
         }
 
         foreach (var x in Instrument.Connections)
@@ -158,10 +183,15 @@ public partial class InstrumentEditorGui : UserControl
             var endIndex = x.Value.Node.Outputs.Select(n => n.Name).ToArray().IndexOf(x.Value.Name);
             line.Stroke = System.Windows.Media.Brushes.Black;
             line.X1 = lineStartNode.Margin.Left;
-            line.Y1 = lineStartNode.Margin.Top + 40 + 30 * startIndex;
-            line.X2 = lineEndNode.Margin.Left + lineEndNode.Width;
-            line.Y2 = lineEndNode.Margin.Top + 40 + 30 * endIndex;
+            line.Y1 = lineStartNode.Margin.Top + (40 + 30 * startIndex) * Scale;
+            line.X2 = lineEndNode.Margin.Left + lineEndNode.Width * Scale;
+            line.Y2 = lineEndNode.Margin.Top + (40 + 30 * endIndex) * Scale;
             Plane.Children.Add(line);
         }
+    }
+
+    private void PropertyNameChanged(object sender, TextChangedEventArgs e)
+    {
+        _selectedNode.Name = PropertyName.Text;
     }
 }

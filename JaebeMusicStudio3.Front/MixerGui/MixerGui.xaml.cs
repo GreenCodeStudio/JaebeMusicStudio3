@@ -114,11 +114,13 @@ public partial class MixerGui : UserControl
             nodeGui.MouseDown += (s, e) =>
             {
                 _selectedNode = node;
-                PropertiesWrapper.Children.Clear();
+                PropertiesWrapper.Visibility = Visibility.Visible;
+                CustomPropertiesWrapper.Children.Clear();
+                PropertyName.Text = node.Name;
                 var x = GuiFactory.Create(node);
                 if (x != null)
                 {
-                    PropertiesWrapper.Children.Add(x);
+                    CustomPropertiesWrapper.Children.Add(x);
                 }
 
                 Render();
@@ -179,5 +181,10 @@ public partial class MixerGui : UserControl
                 Mixer.LoadVstFile(x);
             }
         }
+    }
+
+    private void PropertyNameChanged(object sender, TextChangedEventArgs e)
+    {
+        _selectedNode.Name = PropertyName.Text;
     }
 }
