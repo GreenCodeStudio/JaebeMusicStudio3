@@ -55,11 +55,29 @@ public partial class NoteLineEditor : UserControl
                 RenderPlane();
                 item.InvokeChanged();
             }
+            else if (args.MiddleButton == System.Windows.Input.MouseButtonState.Pressed)
+            {
+                var deltaX = args.MouseDevice.GetPosition(this).X - _movingPoint.Value.X;
+                var deltaY = args.MouseDevice.GetPosition(this).Y - _movingPoint.Value.Y;
+                HorizontalScrollBar.Value -= deltaX * BeatsPerPixel;
+                PitchLog += deltaY / PitchNoteHeight;
+                _movingPoint = args.MouseDevice.GetPosition(this);
+                Render();
+            }
         };
         this.MouseUp += (sender, args) =>
         {
             _movingNode = null;
             _movingPoint = null;
+        };
+        this.MouseDown += (sender, args) =>
+        {
+            if (!args.Handled)
+            {
+                _movingNode = null;
+            }
+
+            _movingPoint = args.MouseDevice.GetPosition(this);
         };
         Plane.MouseDown += (sender, args) =>
         {
@@ -70,7 +88,7 @@ public partial class NoteLineEditor : UserControl
                 var pitchLog = PitchLog - args.MouseDevice.GetPosition(Plane).Y / PitchNoteHeight;
                 var newNote = new Note
                 {
-                    Start = args.MouseDevice.GetPosition(Plane).X * BeatsPerPixel,
+                    Start = args.MouseDevice.GetPosition(Plane).X * BeatsPerPixel + HorizontalScrollBar.Value,
                     Length = 1,
                     Pitch = Math.Pow(2, (Math.Round(pitchLog - cNoteLog) + cNoteLog) / 12)
                 };
@@ -117,7 +135,7 @@ public partial class NoteLineEditor : UserControl
             }
             else
             {
-                PitchLog += e.Delta / 120.0;
+                PitchLog += e.Delta / PitchNoteHeight;
             }
         }
 
@@ -126,6 +144,8 @@ public partial class NoteLineEditor : UserControl
 
     private void Render()
     {
+        VerticalScrollBar.Value = -PitchLog;
+        HorizontalScrollBar.Maximum = item.Notes.Select(x => x.Start + x.Length).DefaultIfEmpty(0).Max();
         RenderPlane();
         RenderPitches();
     }
@@ -137,8 +157,8 @@ public partial class NoteLineEditor : UserControl
         Pitches.Children.Clear();
         var cNoteLog = Math.Log2(440.0) * 12 - 9;
         var noteLength = ActualHeight / PitchNoteHeight;
-        var startLogPitch = Math.Floor(PitchLog - cNoteLog);
-        for (var i = startLogPitch; i > startLogPitch - noteLength; i--)
+        var startLogPitch = (PitchLog - cNoteLog);
+        for (var i = Math.Ceiling(startLogPitch); i > startLogPitch - noteLength; i--)
         {
             var noteModulo = (int)Math.Round(i % 12);
             if (noteModulo < 0)
@@ -164,7 +184,7 @@ public partial class NoteLineEditor : UserControl
             var rect = new Rectangle();
             rect.VerticalAlignment = VerticalAlignment.Top;
             rect.HorizontalAlignment = HorizontalAlignment.Left;
-            rect.Margin = new Thickness((n.Start) / BeatsPerPixel,
+            rect.Margin = new Thickness((n.Start - HorizontalScrollBar.Value) / BeatsPerPixel,
                 (PitchLog - pitch) * PitchNoteHeight, 0, 0);
             rect.Width = n.Length / BeatsPerPixel;
             rect.Height = PitchNoteHeight;
@@ -176,11 +196,12 @@ public partial class NoteLineEditor : UserControl
                 _movingNode = n;
                 _movingPoint = args.MouseDevice.GetPosition(this);
                 _movingEnd = false;
+                args.Handled = true;
             };
             var afterRect = new Rectangle();
             afterRect.VerticalAlignment = VerticalAlignment.Top;
             afterRect.HorizontalAlignment = HorizontalAlignment.Left;
-            afterRect.Margin = new Thickness((n.Start + n.Length) / BeatsPerPixel,
+            afterRect.Margin = new Thickness((n.Start + n.Length - HorizontalScrollBar.Value) / BeatsPerPixel,
                 (PitchLog - pitch) * PitchNoteHeight, 0, 0);
             afterRect.Width = 20;
             afterRect.Height = PitchNoteHeight;
@@ -197,6 +218,7 @@ public partial class NoteLineEditor : UserControl
 
     private void ScrollBar_OnScroll(object sender, ScrollEventArgs e)
     {
+        PitchLog = -VerticalScrollBar.Value;
         Render();
     }
 }
