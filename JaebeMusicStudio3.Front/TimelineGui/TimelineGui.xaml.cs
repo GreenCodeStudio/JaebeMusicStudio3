@@ -286,4 +286,12 @@ public partial class TimelineGui : UserControl, ITabbableControl
             }
         });
     }
+
+    private void ShowNotesView(object sender, RoutedEventArgs e)
+    {
+        UiWindow.Open(() =>
+            new TabView(() => new TimelineNotesView(timeline)
+            )
+        );
+    }
 }

@@ -27,6 +27,7 @@
                 <Button Click="ZoomHIn">Zoom H +</Button>
                 <Button Click="Play">Play</Button>
                 <Button Click="Stop">Stop</Button>
+                <Button Click="ShowNotesView">Notes View</Button>
             </StackPanel>
             <Grid Name="LinesWrapper" Grid.Row="1" ClipToBounds="True">
                 <Rectangle Fill="Brown" Width="1" HorizontalAlignment="Left" Name="NowMarker"></Rectangle>

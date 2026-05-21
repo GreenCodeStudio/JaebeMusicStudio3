@@ -131,7 +131,7 @@ public partial class HorizontalNoteEditor : UserControl
         Render();
     }
 
-    private void Render()
+    public void Render()
     {
         VerticalScrollBar.Value = -PitchLog;
         HorizontalScrollBar.Maximum = getNotes().Select(x => x.Start + x.Length).DefaultIfEmpty(0).Max();
