@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using JaebeMusicStudio3.Core.AudioRendering;
+using JaebeMusicStudio3.Core.Timeline;
 
 namespace JaebeMusicStudio3.Core.AudioNodes;
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "Type")]
@@ -12,6 +13,7 @@ namespace JaebeMusicStudio3.Core.AudioNodes;
 [JsonDerivedType(typeof(NoteModificationNode), typeDiscriminator: "NoteModificationNode")]
 [JsonDerivedType(typeof(NoteGateNode), typeDiscriminator: "NoteGateNode")]
 [JsonDerivedType(typeof(BasicOscillatorNode), typeDiscriminator: "BasicOscillatorNode")]
+[JsonDerivedType(typeof(RecordedSound), typeDiscriminator: "RecordedSound")]
 
 public interface IAudioNode
 {

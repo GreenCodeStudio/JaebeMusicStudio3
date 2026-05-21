@@ -14,9 +14,11 @@ public class NoteLine : ITimelineItem
         set
         {
             field = value;
+            InstrumentId = value?.Id ?? null;
             Changed?.Invoke();
         }
     }
+    public Guid? InstrumentId { get; set; }
 
     public double LengthSeconds => (Notes.Count > 0 ? Notes.Max(n => n.Start + n.Length) : 0) * 60 / Tempo;
 

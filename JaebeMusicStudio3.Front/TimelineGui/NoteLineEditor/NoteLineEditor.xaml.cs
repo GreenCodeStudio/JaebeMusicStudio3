@@ -148,6 +148,15 @@ public partial class NoteLineEditor : UserControl
         HorizontalScrollBar.Maximum = item.Notes.Select(x => x.Start + x.Length).DefaultIfEmpty(0).Max();
         RenderPlane();
         RenderPitches();
+
+        this.TimelineMarker.SecondsPerPixel = BeatsPerPixel * item.Tempo / 60;
+        this.TimelineMarker.OffsetInSeconds = HorizontalScrollBar.Value * item.Tempo / 60;
+
+        this.TimelineMarkerBeats.BeatsPerPixel = BeatsPerPixel;
+        this.TimelineMarkerBeats.Offset = HorizontalScrollBar.Value;
+
+        this.TimelineMarkerBeatsLines.BeatsPerPixel = BeatsPerPixel;
+        this.TimelineMarkerBeatsLines.Offset = HorizontalScrollBar.Value;
     }
 
     private void RenderPitches()

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:JaebeMusicStudio3.Front.TimelineGui.NoteLineEditor"
+             xmlns:timelineGui="clr-namespace:JaebeMusicStudio3.Front.TimelineGui"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -14,7 +15,11 @@
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid Background="#eee" Name="Pitches" Grid.Column="0" Margin="4" />
-        <Grid Background="#eee" Name="Plane" Grid.Column="1" Margin="4" />
+        <timelineGui:TimelineMarkerBeats  Grid.Column="1" Margin="4,30,4,4"  x:Name="TimelineMarkerBeatsLines" Lines="True" Texts="True" VerticalAlignment="Stretch" Background="#8fff" />
+        <Grid Name="Plane" Grid.Column="1" Margin="4" />
+        
+        <timelineGui:TimelineMarker  Grid.Column="1"  Margin="4,0,4,0" Height="30" x:Name="TimelineMarker" VerticalAlignment="Top" Background="#8fff" />
+        <timelineGui:TimelineMarkerBeats  Grid.Column="1" Margin="4,30,4,0"  Height="30" x:Name="TimelineMarkerBeats" VerticalAlignment="Top" Background="#8fff" />
         <StackPanel Background="#ddd" Name="PropertiesWrapper" Grid.Column="3" Margin="4" >
             <StackPanel>
                 <ComboBox Name="InstrumentSelect"></ComboBox>

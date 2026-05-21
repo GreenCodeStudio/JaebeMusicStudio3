@@ -1,7 +1,9 @@
 ﻿using System.IO.Compression;
 using System.Text.Json;
+using JaebeMusicStudio3.Core.AudioNodes;
 using JaebeMusicStudio3.Core.IO;
 using JaebeMusicStudio3.Core.Mixer;
+using JaebeMusicStudio3.Core.Timeline;
 
 namespace JaebeMusicStudio3.Core.Serialization;
 
@@ -57,6 +59,14 @@ public class Project
         JaebeMusicStudio3.Core.Timeline.Timeline.Current = this.Timeline;
         AudioMixer.Current = this.Mixer;
         IOWrapper.Assignments = this.IoAssignments;
+        foreach (var timelineItem in Timeline.Items)
+        {
+            if (timelineItem is NoteLine tin)
+            {
+                tin.Instrument = Mixer.Nodes.OfType<Instrument>().FirstOrDefault(i => i.Id == tin.InstrumentId);
+            }
+        }
+
         Loaded?.Invoke();
     }
 
