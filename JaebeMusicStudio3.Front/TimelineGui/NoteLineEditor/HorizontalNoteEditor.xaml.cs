@@ -22,9 +22,11 @@ public partial class HorizontalNoteEditor : UserControl
     private readonly Func<double> getTempo;
     public event Action NoteChanged;
     public event Action<Note> NoteAdded;
+    public bool Editable { get; set; } = true;
 
-    public HorizontalNoteEditor(Func<IEnumerable<Note>> getNotes, Func<double> getTempo)
+    public HorizontalNoteEditor(Func<IEnumerable<Note>> getNotes, Func<double> getTempo, bool editable = true)
     {
+        Editable = editable;
         this.getNotes = getNotes;
         this.getTempo = getTempo;
         InitializeComponent();
@@ -33,7 +35,7 @@ public partial class HorizontalNoteEditor : UserControl
 
         this.MouseMove += (sender, args) =>
         {
-            if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed && _movingNode != null)
+            if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed && _movingNode != null && Editable)
             {
                 var cNoteLog = Math.Log2(440.0) * 12 - 9;
                 var deltaX = args.MouseDevice.GetPosition(this).X - _movingPoint.Value.X;
@@ -86,7 +88,7 @@ public partial class HorizontalNoteEditor : UserControl
         Plane.MouseDown += (sender, args) =>
         {
             if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed &&
-                (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt)))
+                (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt)) && Editable)
             {
                 var cNoteLog = Math.Log2(440.0) * 12 - 9;
                 var pitchLog = PitchLog - args.MouseDevice.GetPosition(Plane).Y / PitchNoteHeight;
@@ -100,6 +102,7 @@ public partial class HorizontalNoteEditor : UserControl
                 RenderPlane();
             }
         };
+        SizeChanged += (sender, args) => Render();
     }
 
     private void OnMouseWheel(object sender, MouseWheelEventArgs e)
@@ -190,39 +193,48 @@ public partial class HorizontalNoteEditor : UserControl
         Plane.Children.Clear();
         foreach (var n in getNotes())
         {
+            var left = (n.Start - HorizontalScrollBar.Value) / BeatsPerPixel;
+            var width = n.Length / BeatsPerPixel;
             var pitch = Math.Log2(n.Pitch) * 12;
-            var rect = new Rectangle();
-            rect.VerticalAlignment = VerticalAlignment.Top;
-            rect.HorizontalAlignment = HorizontalAlignment.Left;
-            rect.Margin = new Thickness((n.Start - HorizontalScrollBar.Value) / BeatsPerPixel,
-                (PitchLog - pitch) * PitchNoteHeight, 0, 0);
-            rect.Width = n.Length / BeatsPerPixel;
-            rect.Height = PitchNoteHeight;
-            rect.Fill = System.Windows.Media.Brushes.Green;
-            rect.Stroke = System.Windows.Media.Brushes.Black;
-            Plane.Children.Add(rect);
-            rect.MouseDown += (sender, args) =>
+            if (left < ActualWidth && left + width + 10 > 0 && PitchLog - pitch > -1 &&
+                PitchLog - pitch < ActualHeight / PitchNoteHeight)
             {
-                _movingNode = n;
-                _movingPoint = args.MouseDevice.GetPosition(this);
-                _movingEnd = false;
-                args.Handled = true;
-            };
-            var afterRect = new Rectangle();
-            afterRect.VerticalAlignment = VerticalAlignment.Top;
-            afterRect.HorizontalAlignment = HorizontalAlignment.Left;
-            afterRect.Margin = new Thickness((n.Start + n.Length - HorizontalScrollBar.Value) / BeatsPerPixel,
-                (PitchLog - pitch) * PitchNoteHeight, 0, 0);
-            afterRect.Width = 20;
-            afterRect.Height = PitchNoteHeight;
-            afterRect.Fill = new SolidColorBrush(Color.FromArgb(128, 0, 255, 0));
-            Plane.Children.Add(afterRect);
-            afterRect.MouseDown += (sender, args) =>
-            {
-                _movingNode = n;
-                _movingPoint = args.MouseDevice.GetPosition(this);
-                _movingEnd = true;
-            };
+                var rect = new Rectangle();
+                rect.VerticalAlignment = VerticalAlignment.Top;
+                rect.HorizontalAlignment = HorizontalAlignment.Left;
+                rect.Margin = new Thickness(left,
+                    (PitchLog - pitch) * PitchNoteHeight, 0, 0);
+                rect.Width = width;
+                rect.Height = PitchNoteHeight;
+                rect.Fill = System.Windows.Media.Brushes.Green;
+                rect.Stroke = System.Windows.Media.Brushes.Black;
+                Plane.Children.Add(rect);
+                rect.MouseDown += (sender, args) =>
+                {
+                    _movingNode = n;
+                    _movingPoint = args.MouseDevice.GetPosition(this);
+                    _movingEnd = false;
+                    args.Handled = true;
+                };
+                if (Editable)
+                {
+                    var afterRect = new Rectangle();
+                    afterRect.VerticalAlignment = VerticalAlignment.Top;
+                    afterRect.HorizontalAlignment = HorizontalAlignment.Left;
+                    afterRect.Margin = new Thickness((n.Start + n.Length - HorizontalScrollBar.Value) / BeatsPerPixel,
+                        (PitchLog - pitch) * PitchNoteHeight, 0, 0);
+                    afterRect.Width = 10;
+                    afterRect.Height = PitchNoteHeight;
+                    afterRect.Fill = new SolidColorBrush(Color.FromArgb(128, 0, 255, 0));
+                    Plane.Children.Add(afterRect);
+                    afterRect.MouseDown += (sender, args) =>
+                    {
+                        _movingNode = n;
+                        _movingPoint = args.MouseDevice.GetPosition(this);
+                        _movingEnd = true;
+                    };
+                }
+            }
         }
     }
 

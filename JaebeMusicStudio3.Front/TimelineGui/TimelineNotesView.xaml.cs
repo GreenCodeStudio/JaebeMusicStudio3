@@ -19,7 +19,7 @@ public partial class TimelineNotesView : UserControl
                 Start = x.Start / (n as NoteLine).Tempo * 60 + (n as NoteLine).OffsetSeconds,
                 Pitch = x.Pitch,
                 Volume = x.Volume,
-            })), () => 0);
+            })), () => 0, false);
         MainGrid.Children.Add(NoteEditor);
         timeline.Changed += () =>
         {
