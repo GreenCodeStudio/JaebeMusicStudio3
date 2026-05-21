@@ -24,7 +24,7 @@ public partial class HorizontalNoteEditor : UserControl
     public event Action<Note> NoteAdded;
     public bool Editable { get; set; } = true;
 
-    public HorizontalNoteEditor(Func<IEnumerable<Note>> getNotes, Func<double> getTempo, bool editable = true)
+    public HorizontalNoteEditor(Func<IEnumerable<Note>> getNotes, Func<double> getTempo, bool editable = true, Func<IEnumerable<double>> getNowMarkers=null)
     {
         Editable = editable;
         this.getNotes = getNotes;
@@ -103,6 +103,23 @@ public partial class HorizontalNoteEditor : UserControl
             }
         };
         SizeChanged += (sender, args) => Render();
+        CompositionTarget.Rendering += (s, e) =>
+        {
+            if (getNowMarkers != null)
+            {
+                NowMarkers.Children.Clear();
+                foreach (var m in getNowMarkers())
+                {
+                    var marker = new Rectangle();
+                    marker.VerticalAlignment = VerticalAlignment.Stretch;
+                    marker.HorizontalAlignment = HorizontalAlignment.Left;
+                    marker.Margin = new Thickness((m - HorizontalScrollBar.Value) / BeatsPerPixel, 0, 0, 0);
+                    marker.Width = 2;
+                    marker.Fill = System.Windows.Media.Brushes.Red;
+                    NowMarkers.Children.Add(marker);
+                }
+            }
+        };
     }
 
     private void OnMouseWheel(object sender, MouseWheelEventArgs e)

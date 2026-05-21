@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using JaebeMusicStudio3.Core.AudioNodes;
+using JaebeMusicStudio3.Core.AudioRendering;
 using JaebeMusicStudio3.Core.Mixer;
 using JaebeMusicStudio3.Core.Timeline;
 
@@ -33,7 +34,18 @@ public partial class NoteLineEditor : UserControl
                 item.Instrument = instrument;
             }
         };
-        this.NoteEditor = new HorizontalNoteEditor(()=>itemN.Notes, ()=>itemN.Tempo);
+        this.NoteEditor = new HorizontalNoteEditor(()=>itemN.Notes, ()=>itemN.Tempo, true, () =>
+        {
+            if (RenderingProcess.Current.UseTimeline)
+            {
+                return new double[]
+                    { ((double)RenderingProcess.Current.Position / RenderingProcess.Current.SampleRate) - itemN.OffsetSeconds };
+            }
+            else
+            {
+                return new double[0];
+            }
+        });
         NoteEditor.NoteAdded += (n) =>
         {
             itemN.Notes.Add(n);
